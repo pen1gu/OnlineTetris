@@ -61,7 +61,7 @@ namespace ChatClient_jkw
         {
             if (e.KeyCode == Keys.Enter)
             {
-                var connected = (connection?.Connected ?? false);
+                var connected = connection?.Connected ?? false;
                 if (!connected)
                 {
                     MessageBox.Show("연결 먼저 하세요");
@@ -78,7 +78,7 @@ namespace ChatClient_jkw
 
         private async Task HandleReceiveAsync()
         {
-            var buffer = new byte[10];
+            var buffer = new byte[10000];
             while (true)
             {
                 var receiveCount = await connection.ReceiveAsync(buffer, SocketFlags.None);

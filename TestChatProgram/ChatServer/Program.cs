@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -29,14 +31,15 @@ namespace ChatServer
         // Thread signal.  
         public static ManualResetEvent allDone = new ManualResetEvent(false);
 
+        static List<Socket> clients = new List<Socket>();
+
         public static async Task StartListening()
         {
             // Establish the local endpoint for the socket.  
             // The DNS name of the computer  
             // running the listener is "host.contoso.com".  
-            IPHostEntry ipHostInfo = Dns.GetHostEntry("127.0.0.1");
-            IPAddress ipAddress = ipHostInfo.AddressList[0];
-            IPEndPoint localEndPoint = new IPEndPoint(ipAddress, 11000);
+            IPAddress ipAddress = IPAddress.Parse("221.143.21.37");
+            IPEndPoint localEndPoint = new IPEndPoint(ipAddress, 52217);
 
             // Create a TCP/IP socket.  
             Socket listener = new Socket(ipAddress.AddressFamily,
@@ -59,6 +62,8 @@ namespace ChatServer
                     acceptEventArgs.Completed += AcceptEventArgs_Completed;
                     //var result = listener.AcceptAsync(acceptEventArgs);
                     var socket = await listener.AcceptAsync();
+
+                    clients.Add(socket);
 
                     Task.Run(async () =>
                     {
@@ -86,7 +91,7 @@ namespace ChatServer
 
         private static async Task HandleConnection(Socket client)
         {
-            var buffer = new byte[10];
+            var buffer = new byte[10000];
             while (true)
             {
                 var receiveCount = await client.ReceiveAsync(buffer, SocketFlags.None);
@@ -95,12 +100,32 @@ namespace ChatServer
                 {
                     Console.WriteLine("receive 0.");
                     client.Close();
+                    if (clients.Contains(client))
+                    {
+                        clients.Remove(client);
+                    }
                     return;
                 }
 
                 var message = Encoding.UTF8.GetString(buffer, 0, receiveCount);
+                var bytes = Encoding.UTF8.GetBytes(message);
 
-                await client.SendAsync(Encoding.UTF8.GetBytes(message), SocketFlags.None);
+                Console.WriteLine($"Send message {message} to {clients.Count} clients");
+                foreach (var clientSocket in clients)
+                {
+                    Console.WriteLine($"Send: {message}");
+                    if (clientSocket?.Connected ?? false)
+                    {
+                        await clientSocket.SendAsync(bytes, SocketFlags.None);
+                    }
+                }
+                //var tasks = clients.Select(async clientSocket =>
+                //{
+                //    Console.WriteLine($"Send({clientSocket.AddressFamily}): {message}");
+                //    await clientSocket.SendAsync(Encoding.UTF8.GetBytes(message), SocketFlags.None);
+                //});
+
+                //await Task.WhenAll(tasks);
             }
         }
 
