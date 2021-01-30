@@ -33,9 +33,8 @@ namespace ChatClient_jkw
                 connection.Close();
                 connection = null;
             }
-            IPHostEntry ipHostInfo = Dns.GetHostEntry("127.0.0.1");
-            IPAddress ipAddress = ipHostInfo.AddressList[0];
-            IPEndPoint remoteEP = new IPEndPoint(ipAddress, 11000);
+            IPAddress ipAddress = IPAddress.Parse("221.143.21.37");
+            IPEndPoint remoteEP = new IPEndPoint(ipAddress, 52217);
 
             // Create a TCP/IP socket.  
             try
