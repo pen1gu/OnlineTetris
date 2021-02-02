@@ -35,10 +35,7 @@ namespace ChatServer
 
         public static async Task StartListening()
         {
-            // Establish the local endpoint for the socket.  
-            // The DNS name of the computer  
-            // running the listener is "host.contoso.com".  
-            IPAddress ipAddress = IPAddress.Parse("221.143.21.37");
+            IPAddress ipAddress = IPAddress.Any;
             IPEndPoint localEndPoint = new IPEndPoint(ipAddress, 52217);
 
             // Create a TCP/IP socket.  
@@ -58,17 +55,12 @@ namespace ChatServer
 
                     // Start an asynchronous socket to listen for connections.  
                     Console.WriteLine("Waiting for a connection...");
-                    var acceptEventArgs = new SocketAsyncEventArgs();
-                    acceptEventArgs.Completed += AcceptEventArgs_Completed;
-                    //var result = listener.AcceptAsync(acceptEventArgs);
+
                     var socket = await listener.AcceptAsync();
 
                     clients.Add(socket);
 
-                    Task.Run(async () =>
-                    {
-                        await HandleConnection(socket);
-                    });
+                    HandleConnection(socket);
 
                     //listener.BeginAccept(
                     //    new AsyncCallback(AcceptCallback),
@@ -89,7 +81,7 @@ namespace ChatServer
 
         }
 
-        private static async Task HandleConnection(Socket client)
+        private static async void HandleConnection(Socket client)
         {
             var buffer = new byte[10000];
             while (true)
@@ -113,9 +105,9 @@ namespace ChatServer
                 Console.WriteLine($"Send message {message} to {clients.Count} clients");
                 foreach (var clientSocket in clients)
                 {
-                    Console.WriteLine($"Send: {message}");
                     if (clientSocket?.Connected ?? false)
                     {
+                        Console.WriteLine($"Send: {message}");
                         await clientSocket.SendAsync(bytes, SocketFlags.None);
                     }
                 }
