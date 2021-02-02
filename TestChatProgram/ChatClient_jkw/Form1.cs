@@ -20,7 +20,12 @@ namespace ChatClient_jkw
             InitializeComponent();
         }
 
-        private async void ConnectServerButton_Click(object sender, EventArgs e)
+        private void ConnectServerButton_Click(object sender, EventArgs e)
+        {
+            Connect(IPAddress.Loopback);
+        }
+
+        private async void Connect(IPAddress ip)
         {
             if (connection?.Connected ?? false)
             {
@@ -33,13 +38,13 @@ namespace ChatClient_jkw
                 connection.Close();
                 connection = null;
             }
-            IPAddress ipAddress = IPAddress.Parse("221.143.21.37");
-            IPEndPoint remoteEP = new IPEndPoint(ipAddress, 52217);
+            //IPAddress ipAddress = IPAddress.Parse("221.143.21.37");
+            IPEndPoint remoteEP = new IPEndPoint(ip, 52217);
 
             // Create a TCP/IP socket.  
             try
             {
-                Socket client = new Socket(ipAddress.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
+                Socket client = new Socket(ip.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
 
                 await client.ConnectAsync(remoteEP);
 
@@ -97,6 +102,12 @@ namespace ChatClient_jkw
                 var receiveData = Encoding.UTF8.GetString(buffer, 0, receiveCount);
                 richTextBox1.Text += receiveData + "\n";
             }
+        }
+
+        private void ConnectRemoteServerButton_Click(object sender, EventArgs e)
+        {
+            IPAddress ipAddress = IPAddress.Parse("221.143.21.37");
+            Connect(ipAddress);
         }
     }
 }
