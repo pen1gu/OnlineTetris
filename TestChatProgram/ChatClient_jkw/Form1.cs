@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Common;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -75,8 +76,7 @@ namespace ChatClient_jkw
 
                 Task.Run(async () =>
                 {
-                    var buffer = Encoding.UTF8.GetBytes(MessageTextBox.Text);
-                    await connection.SendAsync(buffer, SocketFlags.None);
+                    await connection.SendTextAsync(MessageTextBox.Text);
                 }).Wait();
             }
         }
@@ -86,7 +86,7 @@ namespace ChatClient_jkw
             var buffer = new byte[10000];
             while (true)
             {
-                var receiveCount = await connection.ReceiveAsync(buffer, SocketFlags.None);
+                var (receiveCount, receiveText) = await connection.ReceiveTextAsync(buffer);
                 if (receiveCount == 0)
                 {
                     if (connection.Connected)
@@ -99,8 +99,7 @@ namespace ChatClient_jkw
                     }
                     break;
                 }
-                var receiveData = Encoding.UTF8.GetString(buffer, 0, receiveCount);
-                richTextBox1.Text += receiveData + "\n";
+                richTextBox1.Text += receiveText + "\n";
             }
         }
 
