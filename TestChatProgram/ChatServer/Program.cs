@@ -65,9 +65,9 @@ namespace ChatServer
                     }
 
                     Console.WriteLine("{0}:{1} → {2}", iep.Address, iep.Port, msg);
-                    for (int i = 0; i < connections.Count; i++)
-                    {
-                        connections[i].Send(packet);
+                    foreach (Socket connection in connections)
+                    { 
+                        connection.Send(packet);
                     }
                 }
             }
