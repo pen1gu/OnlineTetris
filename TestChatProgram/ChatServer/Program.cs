@@ -1,83 +1,95 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
+using System.Linq;
 using System.Net;
 using System.Net.Sockets;
+using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
+using Common;
 
 namespace ChatServer
 {
     class Program
     {
-        static List<Socket> connections = null;
-        byte[] msgPacket = new byte[1024];
-        static void Main(string[] args)
+        static List<Socket> clients = new List<Socket>();
+
+        public static async Task StartListening()
         {
-            Socket sock = null;
-            sock = new Socket(
-                AddressFamily.InterNetwork,
-                SocketType.Stream,
-                ProtocolType.Tcp
-                );//소켓 생성 
+            IPAddress ipAddress = IPAddress.Any;
+            IPEndPoint localEndPoint = new IPEndPoint(ipAddress, 52217);
 
-            connections = new List<Socket>();
-            //인터페이스와 결합
-            IPAddress addr = IPAddress.Any;
-            IPEndPoint iep = new IPEndPoint(addr, 52217);
-            sock.Bind(iep);
+            Socket listener = new Socket(ipAddress.AddressFamily,
+                SocketType.Stream, ProtocolType.Tcp);
 
-            //백로그 큐 크기 설정
-            sock.Listen(10);
-            Socket dosock;
-
-            Console.WriteLine("연결을 기다리는 중입니다.");
-
-            while (true)//AcceptLoop
+            try
             {
-                dosock = sock.Accept();
-                Console.WriteLine("연결되었습니다.");
-                Thread t = new Thread(new ParameterizedThreadStart(DoIt));
-                t.Start(dosock);
-                connections.Add(dosock);
+                listener.Bind(localEndPoint);
+                listener.Listen(100);
+
+                while (true)
+                {
+                    Console.WriteLine("Waiting for a connection...");
+
+                    var socket = await listener.AcceptAsync();
+
+                    clients.Add(socket);
+
+                    HandleConnection(socket);
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.ToString());
             }
         }
 
-        public static void DoIt(Object socket)
+        private static async void HandleConnection(Socket client)
         {
-            Socket dosock = (Socket)socket;
+            var buffer = new byte[1024];
             try
             {
-                byte[] packet = new byte[1024];
-                IPEndPoint iep = dosock.RemoteEndPoint as IPEndPoint;
                 while (true)
                 {
-                    dosock.Receive(packet);
-                    MemoryStream ms = new MemoryStream(packet);
-                    BinaryReader br = new BinaryReader(ms);
-                    string msg = br.ReadString();
-                    br.Close();
-                    ms.Close();
+                    var (receiveCount, receiveText) = await client.ReceiveTextAsync(buffer);
 
-                    if (msg == "exit")
+                    if (receiveCount == 0)
                     {
-                        Console.WriteLine("{0}:{1} 님이 나가셨습니다.", iep.Address, iep.Port);
-                        break;
+                        Console.WriteLine("receive 0.");
+                        client.Close();
+                        if (clients.Contains(client))
+                        {
+                            clients.Remove(client);
+                        }
+                        return;
                     }
 
-                    Console.WriteLine("{0}:{1} → {2}", iep.Address, iep.Port, msg);
-                    foreach (Socket connection in connections)
-                    { 
-                        connection.Send(packet);
+                    Console.WriteLine($"Send message {receiveText} to {clients.Count} clients");
+                    foreach (var clientSocket in clients)
+                    {
+                        if (clientSocket?.Connected ?? false)
+                        {
+                            Console.WriteLine($"Send: {receiveText}");
+                            await clientSocket.SendTextAsync(receiveText);
+                        }
                     }
                 }
             }
+            catch (SocketException ex)
+            {
+                Console.WriteLine(ex.Message);
+                clients.Remove(client);
+            }
             catch
             {
+                clients.Remove(client);
             }
-            finally
-            {
-                dosock.Close();
-            }
+        }
+
+        public static async Task<int> Main(string[] args)
+        {
+            await StartListening();
+            return 0;
         }
     }
 }

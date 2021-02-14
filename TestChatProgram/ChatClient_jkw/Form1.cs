@@ -61,7 +61,7 @@ namespace ChatClient_jkw
                 connection?.Close();
                 connection = null;
             }
-       }
+        }
 
         private void MessageTextBox_KeyDown(object sender, KeyEventArgs e)
         {
