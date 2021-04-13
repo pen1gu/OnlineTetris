@@ -1,4 +1,5 @@
 ﻿using Common;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -45,13 +46,18 @@ namespace ChatClient_jkw
             // Create a TCP/IP socket.  
             try
             {
-                Socket client = new Socket(ip.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
+                Socket server = new Socket(ip.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
 
-                await client.ConnectAsync(remoteEP);
+                await server.ConnectAsync(remoteEP);
 
-                richTextBox1.Text += $"Connected: {client.Connected} \n";
+                //richTextBox1.Text += $"Connected: {server.Connected} \n";
 
-                connection = client;
+                connection = server;
+
+                await connection.SendDataAsync(new CS_Login
+                {
+                    UserName = "경원",
+                });
 
                 await HandleReceiveAsync();
             }
@@ -63,7 +69,7 @@ namespace ChatClient_jkw
             }
         }
 
-        private void MessageTextBox_KeyDown(object sender, KeyEventArgs e)
+        private async void MessageTextBox_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
             {
@@ -74,10 +80,11 @@ namespace ChatClient_jkw
                     return;
                 }
 
-                Task.Run(async () =>
-                {
-                    await connection.SendTextAsync(MessageTextBox.Text);
-                }).Wait();
+                await connection
+                    .SendDataAsync(new CS_Message
+                    {
+                        Text = MessageTextBox.Text,
+                    });
             }
         }
 
@@ -99,9 +106,36 @@ namespace ChatClient_jkw
                     }
                     break;
                 }
+
                 richTextBox1.Text += receiveText + "\n";
+
+                var obj = JObject.Parse(receiveText);
+                if (!obj.ContainsKey("Type"))
+                {
+                    continue;
+                }
+
+                HandlePacketAsync(obj);
             }
         }
+
+        private void HandlePacketAsync(JObject packetObj)
+        {
+            var packetType = Enum.Parse<PacketType>(packetObj.Value<string>("Type"));
+
+            if (packetType == PacketType.SC_LoginAllow)
+            {
+                var packet = packetObj.ToObject<SC_LoginAllow>();
+                Handle_SC_LoginAllow(packet);
+            }
+            else if (packetType == PacketType.SC_Message)
+            {
+                var packet = packetObj.ToObject<SC_Message>();
+
+                richTextBox1.Text += $"[{packet.UserName}] {packet.Message}\n";
+            }
+        }
+
 
         private void ConnectRemoteServerButton_Click(object sender, EventArgs e)
         {

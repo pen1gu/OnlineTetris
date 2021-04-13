@@ -7,7 +7,7 @@ namespace Common
 
     public class PacketBase
     {
-        public PacketType Type { get; set; }
+        public PacketType Type { get; private set; }
 
         public PacketBase(PacketType type)
         {
