@@ -13,9 +13,9 @@ namespace ChatServer
     public class UserSocketData
     {
         public string UserName { get; }
-        public Socket Socket { get; }
+        public SocketEx Socket { get; }
 
-        public UserSocketData(string userName, Socket socket)
+        public UserSocketData(string userName, SocketEx socket)
         {
             UserName = userName;
             Socket = socket;
@@ -50,7 +50,7 @@ namespace ChatServer
 
                     var socket = await listener.AcceptAsync();
 
-                    HandleConnection(socket);
+                    HandleConnection(new SocketEx(socket));
                 }
             }
             catch (Exception e)
@@ -59,14 +59,14 @@ namespace ChatServer
             }
         }
 
-        private async void HandleConnection(Socket client)
+        private async void HandleConnection(SocketEx client)
         {
             var buffer = new byte[1024];
             try
             {
                 while (true)
                 {
-                    var (receiveCount, receiveText) = await client.ReceiveTextAsync(buffer);
+                    var (receiveCount, receiveText) = await client.ReceiveMessageAsync();
 
                     if (receiveCount == 0)
                     {
@@ -83,7 +83,7 @@ namespace ChatServer
                     var obj = JObject.Parse(receiveText);
                     if (!obj.ContainsKey("Type"))
                     {
-                        await client.SendDataAsync(new SC_System
+                        await client.SendMessageAsync(new SC_System
                         {
                             Data = "올바르지 않은 패킷입니다.",
                         });
@@ -103,7 +103,7 @@ namespace ChatServer
             }
         }
 
-        private async Task HandlePacketAsync(Socket clientSocket, JObject packetObj)
+        private async Task HandlePacketAsync(SocketEx clientSocket, JObject packetObj)
         {
             var packetType = Enum.Parse<PacketType>(packetObj.Value<string>("Type"));
             var userData = clients.FirstOrDefault(x => x.Socket == clientSocket);

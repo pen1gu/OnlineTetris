@@ -16,7 +16,7 @@ namespace ChatClient_jkw
 {
     public partial class Form1 : Form
     {
-        Socket connection = null;
+        SocketEx connection = null;
         public Form1()
         {
             InitializeComponent();
@@ -52,9 +52,9 @@ namespace ChatClient_jkw
 
                 //richTextBox1.Text += $"Connected: {server.Connected} \n";
 
-                connection = server;
+                connection = new SocketEx(server);
 
-                await connection.SendDataAsync(new CS_Login
+                await connection.SendMessageAsync(new CS_Login
                 {
                     UserName = "경원",
                 });
@@ -81,7 +81,7 @@ namespace ChatClient_jkw
                 }
 
                 await connection
-                    .SendDataAsync(new CS_Message
+                    .SendMessageAsync(new CS_Message
                     {
                         Text = MessageTextBox.Text,
                     });
@@ -93,7 +93,7 @@ namespace ChatClient_jkw
             var buffer = new byte[10000];
             while (true)
             {
-                var (receiveCount, receiveText) = await connection.ReceiveTextAsync(buffer);
+                var (receiveCount, receiveText) = await connection.ReceiveMessageAsync();
                 if (receiveCount == 0)
                 {
                     if (connection.Connected)
