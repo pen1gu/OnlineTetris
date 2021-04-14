@@ -61,7 +61,6 @@ namespace ChatServer
 
         private async void HandleConnection(SocketEx client)
         {
-            var buffer = new byte[1024];
             try
             {
                 while (true)

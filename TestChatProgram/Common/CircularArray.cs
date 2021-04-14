@@ -4,9 +4,10 @@ using System.Text;
 
 namespace Common
 {
-    public class CircularArray<T>
+    public class CircularArray
     {
-        private T[] _buffer;
+        private byte[] _buffer;
+        private byte[] _getStringBuffer;
         private int _size;
         private int _beginIndex;
         private int _endIndex;
@@ -23,16 +24,17 @@ namespace Common
 
         public CircularArray(int size)
         {
-            _buffer = new T[size];
+            _buffer = new byte[size];
+            _getStringBuffer = new byte[size];
             _size = size;
         }
 
-        public void Write(T[] data)
+        public void Write(byte[] data)
         {
             Write(data, 0, data.Length);
         }
 
-        public void Write(T[] data, int offset, int count)
+        public void Write(byte[] data, int offset, int count)
         {
             for (var i = offset; i < offset + count; i++)
             {
@@ -41,12 +43,12 @@ namespace Common
             }
         }
 
-        public int Read(T[] arr)
+        public int Read(byte[] arr)
         {
             return Read(arr, 0, arr.Length);
         }
 
-        public int Read(T[] arr, int offset, int count)
+        public int Read(byte[] arr, int offset, int count)
         {
             var readCount = 0;
             for (var i = offset; Any && i < offset + count; i++)
@@ -58,17 +60,43 @@ namespace Common
             return readCount;
         }
 
-        public Memory<T> GetWritableMemory()
+        public string ReadString(int length)
+        {
+            if (_beginIndex + length <= _size)
+            {
+                var str = Encoding.UTF8.GetString(_buffer, _beginIndex, length);
+                _beginIndex += length;
+                return str;
+            }
+            else
+            {
+                var length1 = _size - _beginIndex;
+                var source1 = new Memory<byte>(_buffer, _beginIndex, length1);
+                var target1 = new Memory<byte>(_getStringBuffer, 0, length1);
+                source1.CopyTo(target1);
+
+                var length2 = length - length1;
+                var source2 = new Memory<byte>(_buffer, 0, length2);
+                var target2 = new Memory<byte>(_getStringBuffer, length1, length2);
+                source2.CopyTo(target2);
+                _beginIndex = (_beginIndex + length) % _size;
+
+                var str = Encoding.UTF8.GetString(_getStringBuffer, 0, length);
+                return str;
+            }
+        }
+
+        public Memory<byte> GetWritableMemory()
         {
             if (_beginIndex <= EndIndex)
             {
                 // 0    begin    end    size
-                return new Memory<T>(_buffer, EndIndex, _size - EndIndex);
+                return new Memory<byte>(_buffer, EndIndex, _size - EndIndex);
             }
             else
             {
                 // 0    end        begin   size
-                return new Memory<T>(_buffer, EndIndex, _beginIndex - EndIndex);
+                return new Memory<byte>(_buffer, EndIndex, _beginIndex - EndIndex);
             }
         }
 

@@ -16,8 +16,7 @@ namespace Common
     public class SocketEx : ISocketEx, IDisposable
     {
         private Socket _socket;
-        private CircularArray<byte> _recvBuffer = new CircularArray<byte>(10000);
-        private byte[] _recvBuffer2 = new byte[10000];
+        private CircularArray _recvBuffer = new CircularArray(10000);
         private byte[] _messageLengthBuffer = new byte[sizeof(int)];
 
         private byte[] _sendBuffer = new byte[10000];
@@ -73,8 +72,7 @@ namespace Common
             {
                 await FillRecvBufferAsync(ct);
             }
-            _recvBuffer.Read(_recvBuffer2, 0, messageLength);
-            var message = Encoding.UTF8.GetString(_recvBuffer2, 0, messageLength);
+            var message = _recvBuffer.ReadString(messageLength);
             return message;
         }
 
@@ -95,9 +93,12 @@ namespace Common
 
         private async Task SendTextAsync(string text, CancellationToken ct)
         {
-            int byteLength = Encoding.UTF8.GetBytes(text, 0, text.Length, _sendBuffer, sizeof(int));
-            var lengthBuffer = BitConverter.GetBytes(byteLength);
-            lengthBuffer.CopyTo(_sendBuffer, 0);
+            var byteLength = Encoding.UTF8.GetBytes(text, 0, text.Length, _sendBuffer, sizeof(int));
+            _sendBuffer[0] = (byte)((byteLength >> 0) & 255);
+            _sendBuffer[1] = (byte)((byteLength >> 8) & 255);
+            _sendBuffer[2] = (byte)((byteLength >> 16) & 255);
+            _sendBuffer[3] = (byte)((byteLength >> 24) & 255);
+
             await _socket.SendAsync(new Memory<byte>(_sendBuffer, 0, byteLength + sizeof(int)), SocketFlags.None, ct);
         }
     }

@@ -90,7 +90,6 @@ namespace ChatClient_jkw
 
         private async Task HandleReceiveAsync()
         {
-            var buffer = new byte[10000];
             while (true)
             {
                 var (receiveCount, receiveText) = await connection.ReceiveMessageAsync();
