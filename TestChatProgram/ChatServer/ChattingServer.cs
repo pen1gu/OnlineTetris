@@ -26,83 +26,14 @@ namespace ChatServer
     {
         private List<UserSocketData> clients = new List<UserSocketData>();
 
-        public async Task Run(int port)
+        public Task DisconnectAsync(SocketEx client)
         {
-            await StartListening(port);
+            clients = clients.Where(x => x.Socket != client).ToList();
+
+            return Task.CompletedTask;
         }
 
-        private async Task StartListening(int port)
-        {
-            IPAddress ipAddress = IPAddress.Any;
-            IPEndPoint localEndPoint = new IPEndPoint(ipAddress, port);
-
-            Socket listener = new Socket(ipAddress.AddressFamily,
-                SocketType.Stream, ProtocolType.Tcp);
-
-            try
-            {
-                listener.Bind(localEndPoint);
-                listener.Listen(100);
-
-                while (true)
-                {
-                    Console.WriteLine("Waiting for a connection...");
-
-                    var socket = await listener.AcceptAsync();
-
-                    HandleConnection(new SocketEx(socket));
-                }
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.ToString());
-            }
-        }
-
-        private async void HandleConnection(SocketEx client)
-        {
-            try
-            {
-                while (true)
-                {
-                    var (receiveCount, receiveText) = await client.ReceiveMessageAsync();
-
-                    if (receiveCount == 0)
-                    {
-                        Console.WriteLine("receive 0.");
-                        //client.Close();
-                        //if (clients.Any(x => x.Socket == client))
-                        //{
-                        //    clients = clients.Where(x => x.Socket != client).ToList();
-                        //}
-                        continue;
-                        //return;
-                    }
-
-                    var obj = JObject.Parse(receiveText);
-                    if (!obj.ContainsKey("Type"))
-                    {
-                        await client.SendMessageAsync(new SC_System
-                        {
-                            Data = "올바르지 않은 패킷입니다.",
-                        });
-                    }
-
-                    await HandlePacketAsync(client, obj);
-                }
-            }
-            catch (SocketException ex)
-            {
-                Console.WriteLine(ex.Message);
-                clients = clients.Where(x => x.Socket != client).ToList();
-            }
-            catch
-            {
-                clients = clients.Where(x => x.Socket != client).ToList();
-            }
-        }
-
-        private async Task HandlePacketAsync(SocketEx clientSocket, JObject packetObj)
+        public async Task HandlePacketAsync(SocketEx clientSocket, JObject packetObj)
         {
             var packetType = Enum.Parse<PacketType>(packetObj.Value<string>("Type"));
             var userData = clients.FirstOrDefault(x => x.Socket == clientSocket);
