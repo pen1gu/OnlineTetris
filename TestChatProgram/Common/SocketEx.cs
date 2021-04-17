@@ -18,8 +18,9 @@ namespace Common
         private Socket _socket;
         private CircularArray _recvBuffer = new CircularArray(10000);
         private byte[] _messageLengthBuffer = new byte[sizeof(int)];
-
         private byte[] _sendBuffer = new byte[10000];
+
+        private AsyncLock _sendLock = new AsyncLock();
 
         public bool Connected => _socket?.Connected ?? false;
 
@@ -93,13 +94,16 @@ namespace Common
 
         private async Task SendTextAsync(string text, CancellationToken ct)
         {
-            var byteLength = Encoding.UTF8.GetBytes(text, 0, text.Length, _sendBuffer, sizeof(int));
-            _sendBuffer[0] = (byte)((byteLength >> 0) & 255);
-            _sendBuffer[1] = (byte)((byteLength >> 8) & 255);
-            _sendBuffer[2] = (byte)((byteLength >> 16) & 255);
-            _sendBuffer[3] = (byte)((byteLength >> 24) & 255);
+            using (await _sendLock.LockAsync())
+            {
+                var byteLength = Encoding.UTF8.GetBytes(text, 0, text.Length, _sendBuffer, sizeof(int));
+                _sendBuffer[0] = (byte)((byteLength >> 0) & 255);
+                _sendBuffer[1] = (byte)((byteLength >> 8) & 255);
+                _sendBuffer[2] = (byte)((byteLength >> 16) & 255);
+                _sendBuffer[3] = (byte)((byteLength >> 24) & 255);
 
-            await _socket.SendAsync(new Memory<byte>(_sendBuffer, 0, byteLength + sizeof(int)), SocketFlags.None, ct);
+                await _socket.SendAsync(new Memory<byte>(_sendBuffer, 0, byteLength + sizeof(int)), SocketFlags.None, ct);
+            }
         }
     }
 }
