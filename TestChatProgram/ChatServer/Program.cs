@@ -16,8 +16,8 @@ namespace ChatServer
         {
             var port = 52217;
 
-            var chattingServer = new ChattingServer();
-            await chattingServer.Run(port);
+            var socketHandler = new SocketHandler();
+            await socketHandler.Run(port);
             return 0;
         }
     }
