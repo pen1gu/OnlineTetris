@@ -9,6 +9,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChatClient_jkw", "ChatClien
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Common", "Common\Common.csproj", "{22930936-E13F-4F37-B075-2DA7073AC08A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChatClient_jtg", "ChatClient_jtg\ChatClient_jtg.csproj", "{2E204D2A-0B05-45C9-B8E8-A147A9CCD0C5}"
+	ProjectSection(ProjectDependencies) = postProject
+		{22930936-E13F-4F37-B075-2DA7073AC08A} = {22930936-E13F-4F37-B075-2DA7073AC08A}
+	EndProjectSection
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChatClient_yhj", "ChatClient_yhj\ChatClient_yhj.csproj", "{F8DDCDF3-A250-480F-90F0-96A48168A061}"
 EndProject
 Global
@@ -29,6 +34,10 @@ Global
 		{22930936-E13F-4F37-B075-2DA7073AC08A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{22930936-E13F-4F37-B075-2DA7073AC08A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{22930936-E13F-4F37-B075-2DA7073AC08A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2E204D2A-0B05-45C9-B8E8-A147A9CCD0C5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2E204D2A-0B05-45C9-B8E8-A147A9CCD0C5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2E204D2A-0B05-45C9-B8E8-A147A9CCD0C5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2E204D2A-0B05-45C9-B8E8-A147A9CCD0C5}.Release|Any CPU.Build.0 = Release|Any CPU
 		{F8DDCDF3-A250-480F-90F0-96A48168A061}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{F8DDCDF3-A250-480F-90F0-96A48168A061}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F8DDCDF3-A250-480F-90F0-96A48168A061}.Release|Any CPU.ActiveCfg = Release|Any CPU
