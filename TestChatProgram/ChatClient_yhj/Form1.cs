@@ -37,6 +37,32 @@ namespace ChatClient_yhj {
 
             // packet 설정(질문)
             _connected.Close();//소켓 
+
+           /* try
+            {
+                Socket server = new Socket(ip.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
+
+                await server.ConnectAsync(remoteEP);
+
+                //richTextBox1.Text += $"Connected: {server.Connected} \n";
+
+                connection = new SocketEx(server);
+
+                await connection.SendMessageAsync(new CS_Login
+                {
+                    UserName = "경원",
+                });
+
+                await HandleReceiveAsync();
+            }
+            catch (Exception ex)
+            {
+                richTextBox1.Text += "Error: " + ex.Message;
+                connection?.Close();
+                connection = null;
+            }*/
+
+            //센세 코드
         }
 
         private void BtnConnect_Click(object sender, EventArgs e)
@@ -58,18 +84,15 @@ namespace ChatClient_yhj {
             }
         }
 
-    private void SendMessage(String message)
-    {
-        richTextBox1.AppendText(message);
-            object packet = null; // 임시 packet 역할
+        private void SendMessage(String message)
+        {
+            richTextBox1.AppendText(message);
 
-            while (true)
-            { 
-                var sendBytes = Encoding.UTF8.GetBytes(message);
-
-                _connected.Send(sendBytes);
-            }
-            // message 추가
+            object packet = null; // 임시 packet
+            
+            var sendBytes = Encoding.UTF8.GetBytes(message);
+            _connected.Send(sendBytes);
+            // message 
         }
 
         private void BtnDisConnect_Click(object sender, EventArgs e)
