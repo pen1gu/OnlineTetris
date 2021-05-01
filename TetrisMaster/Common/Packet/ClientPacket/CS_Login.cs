@@ -14,12 +14,10 @@ namespace Common
         }
     }
 
-    public class CS_Message : PacketBase
+    public class CS_Start : PacketBase
     {
-        public string Text { get; set; }
-
-        public CS_Message()
-            : base(PacketType.CS_Message)
+        public CS_Start()
+            : base(PacketType.CS_Start)
         {
         }
     }

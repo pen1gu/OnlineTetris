@@ -3,10 +3,11 @@
     public enum PacketType
     {
         CS_Login,
-        CS_Message,
+        CS_Start,
 
-        SC_System,
         SC_LoginAllow,
-        SC_Message,
+        SC_MemberUpdated,
+        SC_Start,
+        SC_NextPiece,
     }
 }

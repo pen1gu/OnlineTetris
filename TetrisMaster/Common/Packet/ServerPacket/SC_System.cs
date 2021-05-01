@@ -13,16 +13,6 @@ namespace Common
         {
         }
     }
-    public class SC_System : ServerPacketBase
-    {
-        public string Data { get; set; }
-
-        public SC_System()
-            : base(PacketType.SC_System)
-        {
-        }
-    }
-
     public class SC_LoginAllow : ServerPacketBase
     {
         public bool Allow { get; set; }
@@ -34,13 +24,29 @@ namespace Common
         }
     }
 
-    public class SC_Message : ServerPacketBase
+    public class SC_MemberUpdated : ServerPacketBase
     {
-        public string UserName { get; set; }
-        public string Message { get; set; }
+        public List<string> UserList { get; set; }
 
-        public SC_Message()
-            : base(PacketType.SC_Message)
+        public SC_MemberUpdated()
+            : base (PacketType.SC_MemberUpdated)
+        {
+        }
+    }
+
+    public class SC_Start : ServerPacketBase
+    {
+        public SC_Start()
+            : base(PacketType.SC_Start)
+        {
+        }
+    }
+
+    public class SC_NextPiece : ServerPacketBase
+    {
+        public PieceType PieceType { get; set; }
+        public SC_NextPiece()
+            : base(PacketType.SC_NextPiece)
         {
         }
     }
