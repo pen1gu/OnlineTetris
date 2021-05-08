@@ -24,18 +24,19 @@ namespace ChatClient_jkw
 
         private void ConnectServerButton_Click(object sender, EventArgs e)
         {
-            Connect(IPAddress.Loopback);
+            Connect(IPAddress.Loopback); // ip 주소 연결
         }
 
-        private async void Connect(IPAddress ip)
+        private async void Connect(IPAddress ip) // 이 작업 끝나기 전까지는 다른 작업 안함.
         {
             if (connection?.Connected ?? false)
             {
-                var result = MessageBox.Show("Already connected. Reconnect?", "", MessageBoxButtons.YesNo);
+                var result = MessageBox.Show("Already connected. Reconnect?", "", MessageBoxButtons.YesNo);// 재 연결 하시겠습니까?
                 if (result == DialogResult.No)
                 {
                     return;
                 }
+
                 connection.Disconnect(false);
                 connection.Close();
                 connection = null;
@@ -88,7 +89,7 @@ namespace ChatClient_jkw
             }
         }
 
-        private async Task HandleReceiveAsync()
+        private async Task HandleReceiveAsync() // 이 부분 질문. -> 
         {
             while (true)
             {
@@ -140,6 +141,11 @@ namespace ChatClient_jkw
         {
             IPAddress ipAddress = IPAddress.Parse("221.143.21.37");
             Connect(ipAddress);
+        }
+
+        private void MessageTextBox_TextChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }

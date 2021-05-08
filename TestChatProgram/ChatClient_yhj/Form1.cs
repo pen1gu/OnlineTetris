@@ -38,11 +38,11 @@ namespace ChatClient_yhj {
             // packet 설정(질문)
             _connected.Close();//소켓 
 
-           /* try
+           try
             {
                 Socket server = new Socket(ip.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
 
-                await server.ConnectAsync(remoteEP);
+                await server.ConnectAsync(iep);
 
                 //richTextBox1.Text += $"Connected: {server.Connected} \n";
 
@@ -50,7 +50,7 @@ namespace ChatClient_yhj {
 
                 await connection.SendMessageAsync(new CS_Login
                 {
-                    UserName = "경원",
+                    UserName = "현준",
                 });
 
                 await HandleReceiveAsync();
@@ -60,7 +60,7 @@ namespace ChatClient_yhj {
                 richTextBox1.Text += "Error: " + ex.Message;
                 connection?.Close();
                 connection = null;
-            }*/
+            }
 
             //센세 코드
         }

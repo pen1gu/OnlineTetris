@@ -12,7 +12,7 @@ namespace ChatServer
 {
     public class UserSocketData
     {
-        public string UserName { get; }
+        public string UserName { get; } 
         public SocketEx Socket { get; }
 
         public UserSocketData(string userName, SocketEx socket)
@@ -22,7 +22,7 @@ namespace ChatServer
         }
     }
 
-    public partial class ChattingServer
+    public partial class ChattingServer // 연결해야할 채팅 서버 
     {
         private List<UserSocketData> clients = new List<UserSocketData>();
 
