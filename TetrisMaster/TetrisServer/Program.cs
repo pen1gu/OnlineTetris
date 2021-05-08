@@ -1,12 +1,17 @@
 ﻿using System;
+using System.Threading.Tasks;
 
 namespace TetrisServer
 {
     class Program
     {
-        static void Main(string[] args)
+        public static async Task<int> Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            var port = 52217;
+
+            var socketHandler = new SocketHandler();
+            await socketHandler.Run(port);
+            return 0;
         }
     }
 }
