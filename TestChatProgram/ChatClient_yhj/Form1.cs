@@ -57,7 +57,7 @@ namespace ChatClient_jkw
 
                 await connection.SendMessageAsync(new CS_Login
                 {
-                    UserName = "경원",
+                    UserName = "현준",
                 });
 
                 await HandleReceiveAsync();
@@ -84,7 +84,7 @@ namespace ChatClient_jkw
                 await connection
                     .SendMessageAsync(new CS_Message
                     {
-                        Text = MessageTextBox.Text,
+                        Text = richTextBox1.Text,
                     });
             }
         }
