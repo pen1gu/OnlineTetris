@@ -51,4 +51,13 @@ namespace Common
         {
         }
     }
+
+    public class SC_BoardUpdated : ServerPacketBase
+    {
+        //public List<(string UserName, Board Board)> BoardList { get; set; }
+        public SC_BoardUpdated()
+            : base(PacketType.SC_BoardUpdated)
+        {
+        }
+    }
 }

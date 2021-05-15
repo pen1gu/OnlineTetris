@@ -21,4 +21,21 @@ namespace Common
         {
         }
     }
+
+    public class CS_GetNextPiece : PacketBase
+    {
+        public CS_GetNextPiece()
+            : base(PacketType.CS_GetNextPiece)
+        {
+        }
+    }
+
+    public class CS_Board : PacketBase
+    {
+        //public Board Board { get; set; }
+        public CS_Board()
+            : base(PacketType.CS_Board)
+        {
+        }
+    }
 }
