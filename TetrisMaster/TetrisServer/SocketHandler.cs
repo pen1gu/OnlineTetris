@@ -11,11 +11,10 @@ namespace TetrisServer
 {
     public class SocketHandler
     {
-        private Lobby Lobby;
-
+        private Lobby _lobby;
         public async Task Run(int port)
         {
-            Lobby = new Lobby();
+            _lobby = new Lobby();
             await StartListening(port);
         }
 
@@ -49,6 +48,7 @@ namespace TetrisServer
 
         private async void HandleConnection(SocketEx client)
         {
+            IServerApi api = new ServerApi(_lobby, client);
             try
             {
                 while (true)
@@ -59,7 +59,7 @@ namespace TetrisServer
                     {
                         Console.WriteLine("receive 0.");
 
-                        await Lobby.LeaveUserAsync(client);
+                        await api.ConnectionClosed();
                         return;
                     }
 
@@ -72,7 +72,7 @@ namespace TetrisServer
                         //});
                     }
 
-                    await HandlePacketAsync(client, obj);
+                    await api.HandlePacketAsync(obj);
                 }
             }
             catch (SocketException ex)
@@ -81,23 +81,6 @@ namespace TetrisServer
             }
             catch
             {
-            }
-        }
-
-        private async Task HandlePacketAsync(SocketEx client, JObject packetObj)
-        {
-            var packetType = Enum.Parse<PacketType>(packetObj.Value<string>("Type"));
-
-            switch (packetType)
-            {
-                case PacketType.CS_Login:
-                    var packet = packetObj.ToObject<CS_Login>();
-                    await Lobby.EnterUserAsync(client, packet.UserName);
-                    break;
-                case PacketType.CS_Start:
-                    break;
-                default:
-                    break;
             }
         }
     }

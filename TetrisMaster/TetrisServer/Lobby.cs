@@ -11,16 +11,16 @@ namespace TetrisServer
 {
     public class Lobby
     {
+        private readonly string LobbyId = "Lobby";
         private List<User> Users { get; set; }
+        private List<IGame> Games { get; } = new List<IGame>();
 
         public Lobby()
         {
         }
 
-        public async Task EnterUserAsync(SocketEx socket, string userName)
+        public async Task EnterUserAsync(User user)
         {
-            var user = new User(userName, socket);
-
             await user.SendLoginAllowAsync(allow: true);
 
             List<User> userList = null;
@@ -30,18 +30,27 @@ namespace TetrisServer
                 userList = Users.ToList();
             }
 
-            await userList
-                ?.Select(async user => await user.SendMemberUpdatedAsync(userList: userList))
-                .WhenAll();
+            await Users.Broadcast(user => user.SendMemberUpdatedAsync(LobbyId, userList));
+
+            IGame game;
+            lock (Games)
+            {
+                game = FindGame(user);
+                if (game == null)
+                {
+                    game = new Game();
+                    Games.Add(game);
+                }
+            }
+            await game?.EnterUserAsync(user);
         }
 
-        public async Task LeaveUserAsync(SocketEx socket)
+        public async Task LeaveUserAsync(User user)
         {
-            User user;
             List<User> userList = null;
             lock (Users)
             {
-                user = Users.Find(x => x.IsYou(socket));
+                user = Users.Find(x => x == user);
                 if (user != null)
                 {
                     Users.Remove(user);
@@ -51,9 +60,18 @@ namespace TetrisServer
 
             if (userList != null)
             {
-                await userList
-                    .Select(async user => await user.SendMemberUpdatedAsync(userList: userList))
-                    .WhenAll();
+                await Users.Broadcast(user => user.SendMemberUpdatedAsync(LobbyId, userList));
+            }
+
+            var game = FindGame(user);
+            await game?.LeaveUserAsync(user);
+        }
+
+        public IGame FindGame(User user)
+        {
+            lock (Games)
+            {
+                return Games.FirstOrDefault(x => x.IsIn(user));
             }
         }
     }

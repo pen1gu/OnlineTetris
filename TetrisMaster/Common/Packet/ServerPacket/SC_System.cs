@@ -26,6 +26,7 @@ namespace Common
 
     public class SC_MemberUpdated : ServerPacketBase
     {
+        public string Id { get; set; }
         public List<string> UserList { get; set; }
 
         public SC_MemberUpdated()
