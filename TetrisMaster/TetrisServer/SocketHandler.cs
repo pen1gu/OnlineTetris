@@ -79,8 +79,10 @@ namespace TetrisServer
             {
                 Console.WriteLine(ex.Message);
             }
-            catch
+            catch (Exception ex)
             {
+                Console.WriteLine(ex.Message);
+                Console.WriteLine(ex.StackTrace);
             }
         }
     }

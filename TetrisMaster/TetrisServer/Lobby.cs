@@ -12,7 +12,7 @@ namespace TetrisServer
     public class Lobby
     {
         private readonly string LobbyId = "Lobby";
-        private List<User> Users { get; set; }
+        private List<User> Users { get; set; } = new List<User>();
         private List<IGame> Games { get; } = new List<IGame>();
 
         public Lobby()

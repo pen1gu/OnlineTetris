@@ -18,7 +18,7 @@ namespace TetrisServer
     public class Game : IGame
     {
         private readonly string Id = Guid.NewGuid().ToString();
-        public List<User> UserList { get; private set; }
+        public List<User> UserList { get; private set; } = new List<User>();
 
         public async Task StartAsync()
         {
