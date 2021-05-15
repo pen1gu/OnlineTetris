@@ -6,4 +6,9 @@
     <UseWindowsForms>true</UseWindowsForms>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\ChatServer\ChatServer.csproj" />
+    <ProjectReference Include="..\Common\Common.csproj" />
+  </ItemGroup>
+
 </Project>
