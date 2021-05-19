@@ -2,18 +2,18 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Common.TetrisData
+namespace Common
 {
     
-    public class Board
+    public class BoardBase
     {
-        public PieceType[,] board { get; set; }
+        public PieceType[,] Board { get; set; }
         public readonly int ColumnCnt = 20;
         public readonly int RowCnt = 10;
 
-        public Board()
+        public BoardBase()
         {
-            board = new PieceType[ColumnCnt, RowCnt];
+            Board = new PieceType[ColumnCnt, RowCnt];
         }
 
     }

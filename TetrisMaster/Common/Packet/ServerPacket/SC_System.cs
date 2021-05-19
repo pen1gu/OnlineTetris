@@ -1,7 +1,7 @@
 ﻿using System;
+using Common;
 using System.Collections.Generic;
 using System.Text;
-using Common.TetrisData;
 
 namespace Common
 {
@@ -55,7 +55,7 @@ namespace Common
 
     public class SC_BoardUpdated : ServerPacketBase
     {
-        public List<(string UserName, Board Board)> BoardList { get; set; }
+        public List<(string UserName, BoardBase Board)> BoardList { get; set; }
         public SC_BoardUpdated()
             : base(PacketType.SC_BoardUpdated)
         {

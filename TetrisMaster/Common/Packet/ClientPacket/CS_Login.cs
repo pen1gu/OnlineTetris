@@ -1,4 +1,5 @@
 ﻿using System;
+using Common;
 using System.Collections.Generic;
 using System.Text;
 
@@ -32,7 +33,7 @@ namespace Common
 
     public class CS_Board : PacketBase
     {
-        //public Board Board { get; set; }
+        public Board Board { get; set; }
         public CS_Board()
             : base(PacketType.CS_Board)
         {
