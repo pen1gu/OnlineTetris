@@ -23,6 +23,16 @@ namespace TetrisServer
                 var packet = packetObj.ToObject<CS_Start>();
                 await api.Handle_CS_Start(packet);
             }
+            else if (packetType == PacketType.CS_GetNextPiece)
+            {
+                var packet = packetObj.ToObject<CS_GetNextPiece>();
+                await api.Handle_CS_GetNextPiece(packet);
+            }
+            else if (packetType == PacketType.CS_Board)
+            {
+                var packet = packetObj.ToObject<CS_Board>();
+                await api.Handle_CS_Board(packet);
+            }
         }
     }
 }

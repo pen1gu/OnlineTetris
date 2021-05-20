@@ -13,17 +13,18 @@ namespace TetrisServer
         bool IsIn(User user);
         Task EnterUserAsync(User user);
         Task LeaveUserAsync(User user);
+        Task UpdateBoardAsync(User user, BoardBase board);
     }
 
     public class Game : IGame
     {
         private readonly string Id = Guid.NewGuid().ToString();
         public List<User> UserList { get; private set; } = new List<User>();
+        public Dictionary<User, BoardBase> UserBoardState = new Dictionary<User, BoardBase>();
 
         public async Task StartAsync()
         {
             await UserList.Broadcast(user => user.SendGameStartAsync());
-            await UserList.Broadcast(user => user.SendRandomPieceAsync());
         }
 
         public async Task EnterUserAsync(User user)
@@ -58,6 +59,21 @@ namespace TetrisServer
             {
                 return UserList.Any(x => x == user);
             }
+        }
+
+        public async Task UpdateBoardAsync(User user, BoardBase board)
+        {
+            if (!IsIn(user))
+                return;
+
+            List<(string UserName, BoardBase Board)> boardList = null;
+            lock (UserBoardState)
+            {
+                UserBoardState[user] = board;
+                boardList = UserBoardState.Select(x => (x.Key.Name.Name, x.Value)).ToList();
+            }
+
+            await UserList.Broadcast(u => u.SendBoardUpdated(boardList));
         }
     }
 }

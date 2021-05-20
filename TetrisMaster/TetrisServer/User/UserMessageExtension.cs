@@ -44,5 +44,12 @@ namespace TetrisServer
                 PieceType = pieceTypes.GetRandom(),
             });
         }
+        public static async Task SendBoardUpdated(this User user, List<(string, BoardBase)> boardList)
+        {
+            await user.SendMessageAsync(new SC_BoardUpdated
+            {
+                BoardList = boardList,
+            });
+        }
     }
 }

@@ -11,6 +11,8 @@ namespace TetrisServer
         Task ConnectionClosed();
         Task Handle_CS_Login(CS_Login pakcet);
         Task Handle_CS_Start(CS_Start packet);
+        Task Handle_CS_GetNextPiece(CS_GetNextPiece packet);
+        Task Handle_CS_Board(CS_Board packet);
     }
     public class ServerApi : IServerApi
     {
@@ -36,6 +38,19 @@ namespace TetrisServer
         {
             var game = _lobby.FindGame(_user);
             await game?.StartAsync();
+        }
+        public async Task Handle_CS_GetNextPiece(CS_GetNextPiece packet)
+        {
+            var game = _lobby.FindGame(_user);
+            if (game != null)
+            {
+                await _user.SendRandomPieceAsync();
+            }
+        }
+        public async Task Handle_CS_Board(CS_Board packet)
+        {
+            var game = _lobby.FindGame(_user);
+            await game?.UpdateBoardAsync(_user, packet.Board);
         }
     }
 }
