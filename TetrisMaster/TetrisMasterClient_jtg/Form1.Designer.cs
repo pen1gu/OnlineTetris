@@ -64,6 +64,7 @@ namespace TetrisMasterClient_jtg
             this.PlayPanel.Name = "PlayPanel";
             this.PlayPanel.Size = new System.Drawing.Size(350, 700);
             this.PlayPanel.TabIndex = 1;
+            this.PlayPanel.Paint += new System.Windows.Forms.PaintEventHandler(this.PlayPanel_Paint);
             // 
             // Player2Panel
             // 
@@ -111,6 +112,7 @@ namespace TetrisMasterClient_jtg
             this.Controls.Add(this.ConnectToServerBtn);
             this.Name = "Form1";
             this.Text = "테트리스";
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.Form1_FormClosed);
             this.ResumeLayout(false);
             this.PerformLayout();
 
