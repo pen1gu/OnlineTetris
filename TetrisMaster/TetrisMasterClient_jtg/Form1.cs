@@ -91,7 +91,7 @@ namespace TetrisMasterClient_jtg
             }
         }
 
-        private void HandlePacketAsync(JObject packetObj)
+        private async void HandlePacketAsync(JObject packetObj)
         {
             var packetType = Enum.Parse<PacketType>(packetObj.Value<string>("Type"));
 
@@ -101,12 +101,29 @@ namespace TetrisMasterClient_jtg
                 Handle_SC_LoginAllow(packet);
             }
             // do something
-//          else if (packetType == PacketType.SC_Message)
-//          {
-//                
-//
-//               
-//          }
+            else if (packetType == PacketType.SC_MemberUpdated)
+            {
+                var packet = packetObj.ToObject<SC_MemberUpdated>();
+                foreach (var item in packet.UserList)
+                {
+                    listBox1.Items.Add(item);
+                }
+            }
+            else if (packetType == PacketType.SC_NextPiece)
+            {
+
+            }
+            else if (packetType == PacketType.SC_Start)
+            {
+                for (int i = 0; i < 6; i++)
+                {
+                    nextPiece();
+                }
+            }
+            else if (packetType == PacketType.SC_BoardUpdated)
+            {
+
+            }
         }
 
         private void Handle_SC_LoginAllow(SC_LoginAllow packet)
@@ -133,6 +150,12 @@ namespace TetrisMasterClient_jtg
 
             await connection
                     .SendMessageAsync(new CS_Start{});
+        }
+
+        private async void nextPiece()
+        {
+            await connection
+                    .SendMessageAsync(new CS_GetNextPiece { });
         }
     }
 }
