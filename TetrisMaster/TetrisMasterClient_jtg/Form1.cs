@@ -92,11 +92,11 @@ namespace TetrisMasterClient_jtg
                     continue;
                 }
 
-                HandlePacketAsync(obj);
+                await HandlePacketAsync(obj);
             }
         }
 
-        private void HandlePacketAsync(JObject packetObj)
+        private async Task HandlePacketAsync(JObject packetObj)
         {
             var packetType = Enum.Parse<PacketType>(packetObj.Value<string>("Type"));
 
@@ -124,7 +124,7 @@ namespace TetrisMasterClient_jtg
             {
                 for (int i = 0; i < 6; i++)
                 {
-                    nextPiece();
+                    await NextPiece();
                 }
 
                 Thread Thread = new Thread(tetrisThread.Run);
@@ -162,7 +162,7 @@ namespace TetrisMasterClient_jtg
                     .SendMessageAsync(new CS_Start{});
         }
 
-        private async void nextPiece()
+        private async Task NextPiece()
         {
             await connection
                     .SendMessageAsync(new CS_GetNextPiece { });

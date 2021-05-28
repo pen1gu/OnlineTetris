@@ -12,8 +12,6 @@ namespace TetrisMasterClient_jtg
 
         public void Run()
         {
-            var image = Image.FromFile("images\tiles.png");
-            
             while (!isEnded)
             {
 
