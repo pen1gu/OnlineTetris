@@ -31,9 +31,11 @@ namespace TetrisMasterClient_jtg
         {
             this.ConnectToServerBtn = new System.Windows.Forms.Button();
             this.StartBtn = new System.Windows.Forms.Button();
-            this.panel1 = new System.Windows.Forms.Panel();
-            this.panel2 = new System.Windows.Forms.Panel();
-            this.panel3 = new System.Windows.Forms.Panel();
+            this.PlayPanel = new System.Windows.Forms.Panel();
+            this.Player2Panel = new System.Windows.Forms.Panel();
+            this.Player3Panel = new System.Windows.Forms.Panel();
+            this.listBox1 = new System.Windows.Forms.ListBox();
+            this.label1 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // ConnectToServerBtn
@@ -56,40 +58,63 @@ namespace TetrisMasterClient_jtg
             this.StartBtn.UseVisualStyleBackColor = true;
             this.StartBtn.Click += new System.EventHandler(this.StartBtn_Click);
             // 
-            // panel1
+            // PlayPanel
             // 
-            this.panel1.Location = new System.Drawing.Point(14, 43);
-            this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(350, 700);
-            this.panel1.TabIndex = 1;
+            this.PlayPanel.Location = new System.Drawing.Point(14, 43);
+            this.PlayPanel.Name = "PlayPanel";
+            this.PlayPanel.Size = new System.Drawing.Size(350, 700);
+            this.PlayPanel.TabIndex = 1;
+            this.PlayPanel.Paint += new System.Windows.Forms.PaintEventHandler(this.PlayPanel_Paint);
             // 
-            // panel2
+            // Player2Panel
             // 
-            this.panel2.Location = new System.Drawing.Point(498, 43);
-            this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(350, 700);
-            this.panel2.TabIndex = 1;
+            this.Player2Panel.Location = new System.Drawing.Point(625, 43);
+            this.Player2Panel.Name = "Player2Panel";
+            this.Player2Panel.Size = new System.Drawing.Size(350, 700);
+            this.Player2Panel.TabIndex = 1;
             // 
-            // panel3
+            // Player3Panel
             // 
-            this.panel3.Location = new System.Drawing.Point(965, 43);
-            this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(350, 700);
-            this.panel3.TabIndex = 1;
+            this.Player3Panel.Location = new System.Drawing.Point(1092, 43);
+            this.Player3Panel.Name = "Player3Panel";
+            this.Player3Panel.Size = new System.Drawing.Size(350, 700);
+            this.Player3Panel.TabIndex = 1;
+            // 
+            // listBox1
+            // 
+            this.listBox1.FormattingEnabled = true;
+            this.listBox1.ItemHeight = 15;
+            this.listBox1.Location = new System.Drawing.Point(370, 61);
+            this.listBox1.Name = "listBox1";
+            this.listBox1.Size = new System.Drawing.Size(159, 94);
+            this.listBox1.TabIndex = 2;
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(370, 43);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(55, 15);
+            this.label1.TabIndex = 3;
+            this.label1.Text = "유저목록";
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1504, 824);
-            this.Controls.Add(this.panel3);
-            this.Controls.Add(this.panel2);
-            this.Controls.Add(this.panel1);
+            this.ClientSize = new System.Drawing.Size(1649, 825);
+            this.Controls.Add(this.label1);
+            this.Controls.Add(this.listBox1);
+            this.Controls.Add(this.Player3Panel);
+            this.Controls.Add(this.Player2Panel);
+            this.Controls.Add(this.PlayPanel);
             this.Controls.Add(this.StartBtn);
             this.Controls.Add(this.ConnectToServerBtn);
             this.Name = "Form1";
             this.Text = "테트리스";
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.Form1_FormClosed);
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -97,9 +122,11 @@ namespace TetrisMasterClient_jtg
 
         private System.Windows.Forms.Button ConnectToServerBtn;
         private System.Windows.Forms.Button StartBtn;
-        private System.Windows.Forms.Panel panel1;
-        private System.Windows.Forms.Panel panel2;
-        private System.Windows.Forms.Panel panel3;
+        private System.Windows.Forms.Panel PlayPanel;
+        private System.Windows.Forms.Panel Player2Panel;
+        private System.Windows.Forms.Panel Player3Panel;
+        private System.Windows.Forms.ListBox listBox1;
+        private System.Windows.Forms.Label label1;
     }
 }
 

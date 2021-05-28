@@ -11,12 +11,17 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Net.Sockets;
 using System.Net;
+using System.Threading;
+using System.Drawing.Imaging;
 
 namespace TetrisMasterClient_jtg
 {
     public partial class Form1 : Form
     {
         SocketEx connection = null;
+        TetrisThread tetrisThread = new TetrisThread();
+
+        static Bitmap image = (Bitmap) Image.FromFile("images\tiles.png");
 
         public Form1()
         {
@@ -87,11 +92,11 @@ namespace TetrisMasterClient_jtg
                     continue;
                 }
 
-                HandlePacketAsync(obj);
+                await HandlePacketAsync(obj);
             }
         }
 
-        private void HandlePacketAsync(JObject packetObj)
+        private async Task HandlePacketAsync(JObject packetObj)
         {
             var packetType = Enum.Parse<PacketType>(packetObj.Value<string>("Type"));
 
@@ -100,13 +105,35 @@ namespace TetrisMasterClient_jtg
                 var packet = packetObj.ToObject<SC_LoginAllow>();
                 Handle_SC_LoginAllow(packet);
             }
-            // do something
-//          else if (packetType == PacketType.SC_Message)
-//          {
-//                
-//
-//               
-//          }
+            else if (packetType == PacketType.SC_MemberUpdated)
+            {
+                var packet = packetObj.ToObject<SC_MemberUpdated>();
+
+                listBox1.Items.Clear();
+
+                foreach (var item in packet.UserList)
+                {
+                    listBox1.Items.Add(item);
+                }
+            }
+            else if (packetType == PacketType.SC_NextPiece)
+            {
+
+            }
+            else if (packetType == PacketType.SC_Start)
+            {
+                for (int i = 0; i < 6; i++)
+                {
+                    await NextPiece();
+                }
+
+                Thread Thread = new Thread(tetrisThread.Run);
+                Thread.Start();
+            }
+            else if (packetType == PacketType.SC_BoardUpdated)
+            {
+
+            }
         }
 
         private void Handle_SC_LoginAllow(SC_LoginAllow packet)
@@ -133,6 +160,37 @@ namespace TetrisMasterClient_jtg
 
             await connection
                     .SendMessageAsync(new CS_Start{});
+        }
+
+        private async Task NextPiece()
+        {
+            await connection
+                    .SendMessageAsync(new CS_GetNextPiece { });
+        }
+
+        private void Form1_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            tetrisThread.isEnded = true;
+        }
+
+        private void DrawBoard(Panel panel, BoardBase boardBase)
+        {
+            
+            
+        }
+
+        private void PlayPanel_Paint(object sender, PaintEventArgs e)
+        {
+            //for (int i = 0; i < 20; i++)
+            //{
+            //    for (int j = 0; j < 10; j++)
+            //    {
+            //        PieceType PieceType = boardBase.Board[i, j];
+            //        Rectangle rect = new Rectangle((int)PieceType * 18, 0, 18, 18);
+            //        var corpImage = image.Clone(rect, PixelFormat.DontCare);
+                    
+            //    }
+            //}
         }
     }
 }
