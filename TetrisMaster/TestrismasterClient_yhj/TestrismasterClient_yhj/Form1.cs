@@ -12,12 +12,14 @@ using System.Windows.Forms;
 using System.Net.Sockets;
 using Newtonsoft.Json.Linq;
 
-namespace TestrismasterClient_yhj
+namespace TetrisMasterClient_yhj
 {
     public partial class Form1 : Form
     {
 
         SocketEx connection = null;
+        User user;
+        TetrisInfo info;
         public Form1()
         {
             InitializeComponent();
@@ -31,9 +33,9 @@ namespace TestrismasterClient_yhj
                 return;
             }
 
-            IPEndPoint remoteEp = new IPEndPoint(ip,52217);
+            IPEndPoint remoteEp = new IPEndPoint(ip, 52217);
 
-            try{
+            try {
                 Socket server = new Socket(ip.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
                 await server.ConnectAsync(remoteEp);
                 connection = new SocketEx(server);
@@ -43,8 +45,9 @@ namespace TestrismasterClient_yhj
                 });
 
                 await HandleReceiveAsync();
+                user = new User("yhj");
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 MessageBox.Show($"서버 연결에 실패하였습니다. {ex.Message}");
                 connection?.Close();
@@ -123,11 +126,51 @@ namespace TestrismasterClient_yhj
 
             await connection
                     .SendMessageAsync(new CS_Start { });
+
+            
+            MessageBox.Show("보드 연결");
+
+            StartBoard();
+        }
+
+        private async void StartBoard()
+        {
+            info = new TetrisInfo(connection, user);
+            await info.Run();
+            UpdateBoard();
         }
 
         private void BtnStart_Click(object sender, EventArgs e)
         {
             GameStart();
+        }
+
+        private async void Form1_KeyDown(object sender, KeyEventArgs e)
+        { 
+            if (connection?.Connected ?? true)
+            {
+                return;
+            }
+
+            else if (e.KeyCode == Keys.Left)
+            {
+                info.MoveLeft();
+            }
+            else if (e.KeyCode == Keys.Right)
+            {
+                info.MoveRight();
+            }
+            else if (e.KeyCode == Keys.Down)
+            {
+                info.MoveDown();
+            }
+
+            UpdateBoard();
+        }
+
+        private async void UpdateBoard()
+        {
+            // receive
         }
     }
 
