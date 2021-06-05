@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace TestrismasterClient_yhj
+namespace TetrisMasterClient_yhj
 {
     static class Program
     {
