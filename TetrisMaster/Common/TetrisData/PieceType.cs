@@ -11,36 +11,36 @@ namespace Common
         /// <summary>
         /// <para>■■■■para>
         /// </summary>
-        A,
+        A = 1,
         /// <summary>
         /// <para>□■□</para>
         /// <para>■■■</para>
         /// </summary>
-        B,
+        B = 2,
         /// <summary>
         /// <para>■■</para>
         /// <para>■■</para>
         /// </summary>
-        C,
+        C = 3,
         /// <summary>
         /// <para>□□■</para>
         /// <para>■■■</para>
         /// </summary>
-        D,
+        D = 4,
         /// <summary>
         /// <para>■□□</para>
         /// <para>■■■</para>
         /// </summary>
-        E,
+        E = 5,
         /// <summary>
         /// <para>□■■</para>
         /// <para>■■□</para>
         /// </summary>
-        F,
+        F = 6,
         /// <summary>
         /// <para>■■□</para>
         /// <para>□■■</para>
         /// </summary>
-        G,
+        G = 7
     }
 }
