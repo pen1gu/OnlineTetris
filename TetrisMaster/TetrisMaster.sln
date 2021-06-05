@@ -12,7 +12,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TetrisMasterClient_jtg", "T
 		{8E8C0604-7112-49B0-BA03-85E9E7A5785D} = {8E8C0604-7112-49B0-BA03-85E9E7A5785D}
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestrismasterClient_yhj", "TestrismasterClient_yhj\TestrismasterClient_yhj\TestrismasterClient_yhj.csproj", "{E61EDEDC-C9F1-4C91-946D-53F053946A63}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TetrismasterClient_yhj", "TestrismasterClient_yhj\TestrismasterClient_yhj\TetrismasterClient_yhj.csproj", "{E61EDEDC-C9F1-4C91-946D-53F053946A63}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
