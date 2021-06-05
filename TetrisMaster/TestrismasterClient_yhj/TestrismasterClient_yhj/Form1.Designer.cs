@@ -1,4 +1,4 @@
-﻿namespace TestrismasterClient_yhj
+﻿namespace TetrisMasterClient_yhj
 {
     partial class Form1
     {
@@ -30,7 +30,7 @@
         {
             this.BtnConnect = new System.Windows.Forms.Button();
             this.BtnStart = new System.Windows.Forms.Button();
-            this.panel1 = new System.Windows.Forms.Panel();
+            this.GamePanel = new System.Windows.Forms.Panel();
             this.SuspendLayout();
             // 
             // BtnConnect
@@ -53,23 +53,25 @@
             this.BtnStart.UseVisualStyleBackColor = true;
             this.BtnStart.Click += new System.EventHandler(this.BtnStart_Click);
             // 
-            // panel1
+            // GamePanel
             // 
-            this.panel1.Location = new System.Drawing.Point(12, 12);
-            this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(330, 432);
-            this.panel1.TabIndex = 1;
+            this.GamePanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.GamePanel.Location = new System.Drawing.Point(12, 12);
+            this.GamePanel.Name = "GamePanel";
+            this.GamePanel.Size = new System.Drawing.Size(330, 432);
+            this.GamePanel.TabIndex = 1;
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(356, 495);
-            this.Controls.Add(this.panel1);
+            this.Controls.Add(this.GamePanel);
             this.Controls.Add(this.BtnStart);
             this.Controls.Add(this.BtnConnect);
             this.Name = "Form1";
             this.Text = "Form1";
+            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Form1_KeyDown);
             this.ResumeLayout(false);
 
         }
@@ -78,7 +80,7 @@
 
         private System.Windows.Forms.Button BtnConnect;
         private System.Windows.Forms.Button BtnStart;
-        private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.Panel GamePanel;
     }
 }
 
