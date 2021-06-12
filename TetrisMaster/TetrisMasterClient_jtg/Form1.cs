@@ -21,7 +21,10 @@ namespace TetrisMasterClient_jtg
         SocketEx connection = null;
         TetrisThread tetrisThread = new TetrisThread();
 
-        static Bitmap image = (Bitmap) Image.FromFile("images\tiles.png");
+        User[] userList = new User[3];
+
+
+        static Bitmap image = (Bitmap)Image.FromFile(@"..\..\..\images\tiles.png");
 
         public Form1()
         {
@@ -42,7 +45,7 @@ namespace TetrisMasterClient_jtg
             }
 
             IPEndPoint remoteEP = new IPEndPoint(ip, 52217);
- 
+
             try
             {
                 Socket server = new Socket(ip.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
@@ -75,16 +78,16 @@ namespace TetrisMasterClient_jtg
                 {
                     if (connection.Connected)
                     {
-                        
+
                     }
                     else
                     {
-                        
+
                     }
                     break;
                 }
 
-                
+
 
                 var obj = JObject.Parse(receiveText);
                 if (!obj.ContainsKey("Type"))
@@ -108,12 +111,14 @@ namespace TetrisMasterClient_jtg
             else if (packetType == PacketType.SC_MemberUpdated)
             {
                 var packet = packetObj.ToObject<SC_MemberUpdated>();
+                Control[] c = Controls.OfType<Panel>().Cast<Control>().ToArray();
 
-                listBox1.Items.Clear();
+                int i = 0;
 
                 foreach (var item in packet.UserList)
                 {
-                    listBox1.Items.Add(item);
+                    userList[i] = new User(item, (Panel)c[i]);
+                    i++;
                 }
             }
             else if (packetType == PacketType.SC_NextPiece)
@@ -159,7 +164,7 @@ namespace TetrisMasterClient_jtg
             }
 
             await connection
-                    .SendMessageAsync(new CS_Start{});
+                    .SendMessageAsync(new CS_Start { });
         }
 
         private async Task NextPiece()
@@ -173,24 +178,36 @@ namespace TetrisMasterClient_jtg
             tetrisThread.isEnded = true;
         }
 
-        private void DrawBoard(Panel panel, BoardBase boardBase)
-        {
-            
-            
-        }
 
         private void PlayPanel_Paint(object sender, PaintEventArgs e)
         {
-            //for (int i = 0; i < 20; i++)
-            //{
-            //    for (int j = 0; j < 10; j++)
-            //    {
-            //        PieceType PieceType = boardBase.Board[i, j];
-            //        Rectangle rect = new Rectangle((int)PieceType * 18, 0, 18, 18);
-            //        var corpImage = image.Clone(rect, PixelFormat.DontCare);
-                    
-            //    }
-            //}
+            Random rand = new Random();
+            //rand.Next(0, 6);
+
+            for (int i = 0; i < 20; i++)
+            {
+                for (int j = 0; j < 10; j++)
+                {
+                    //PieceType PieceType = (PieceType)userList[0].boardBase.Board[i, j];
+                    PieceType PieceType = (PieceType)rand.Next(0, 6);
+                    Rectangle rect = new Rectangle((int)PieceType * 18, 0, 18, 18);
+                    Bitmap corpImage = image.Clone(rect, PixelFormat.DontCare);
+                    e.Graphics.DrawImage(new Bitmap(corpImage, 35, 35), j * 35, i * 35);
+                }
+            }
+        }
+
+
+        private void button1_Click_1(object sender, EventArgs e)
+        {
+            //PlayerPanel1.Invalidate();
+            //PlayerPanel1.Update();
+            //PlayerPanel1.Refresh();
+        }
+
+        private void PlayerPanel2_Paint(object sender, PaintEventArgs e)
+        {
+
         }
     }
 }
