@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using Common;
+using System.Windows.Forms;
 
 namespace TetrisMasterClient_jtg
 {
@@ -9,10 +10,12 @@ namespace TetrisMasterClient_jtg
     {
         public BoardBase boardBase;
         public String userName = "";
+        public Panel board;
 
-        public User(String userName)
+        public User(String userName, Panel board)
         {
             this.userName = userName;
+            this.board = board;
         }
 
     }
