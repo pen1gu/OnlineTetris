@@ -6,7 +6,7 @@ using System.Text;
 namespace TetrisMasterClient_yhj
 {
 
-    class User
+    public class User
     {
         BoardBase board { get; set; }
         string userName { get; set; }
