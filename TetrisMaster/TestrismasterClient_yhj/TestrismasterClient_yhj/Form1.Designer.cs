@@ -60,12 +60,13 @@
             this.GamePanel.Name = "GamePanel";
             this.GamePanel.Size = new System.Drawing.Size(330, 432);
             this.GamePanel.TabIndex = 1;
+            this.GamePanel.Paint += new System.Windows.Forms.PaintEventHandler(this.GamePanel_Paint);
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(356, 495);
+            this.ClientSize = new System.Drawing.Size(986, 495);
             this.Controls.Add(this.GamePanel);
             this.Controls.Add(this.BtnStart);
             this.Controls.Add(this.BtnConnect);
