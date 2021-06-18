@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Net.Sockets;
 using Newtonsoft.Json.Linq;
+using System.Threading;
 
 namespace TetrisMasterClient_yhj
 {
@@ -19,7 +20,9 @@ namespace TetrisMasterClient_yhj
 
         SocketEx connection = null;
         User user;
-        TetrisInfo info;
+        public TetrisInfo info = new TetrisInfo();
+        
+
         public Form1()
         {
             InitializeComponent();
@@ -35,7 +38,8 @@ namespace TetrisMasterClient_yhj
 
             IPEndPoint remoteEp = new IPEndPoint(ip, 52217);
 
-            try {
+            try
+            {
                 Socket server = new Socket(ip.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
                 await server.ConnectAsync(remoteEp);
                 connection = new SocketEx(server);
@@ -127,7 +131,7 @@ namespace TetrisMasterClient_yhj
             await connection
                     .SendMessageAsync(new CS_Start { });
 
-            
+
             MessageBox.Show("보드 연결");
 
             StartBoard();
@@ -135,8 +139,10 @@ namespace TetrisMasterClient_yhj
 
         private async void StartBoard()
         {
-            info = new TetrisInfo(connection, user);
-            await info.Run();
+
+            await info.Run((Form)this, user, connection);
+            startCheck = true;
+            this.Refresh();
             UpdateBoard();
         }
 
@@ -145,8 +151,8 @@ namespace TetrisMasterClient_yhj
             GameStart();
         }
 
-        private async void Form1_KeyDown(object sender, KeyEventArgs e)
-        { 
+        private void Form1_KeyDown(object sender, KeyEventArgs e)
+        {
             if (connection?.Connected ?? true)
             {
                 return;
@@ -160,7 +166,7 @@ namespace TetrisMasterClient_yhj
             {
                 info.MoveRight();
             }
-            else if (e.KeyCode == Keys.Down)
+            else if (e.KeyCode == Keys.Down || e.KeyCode == Keys.Space)
             {
                 info.MoveDown();
             }
@@ -172,6 +178,25 @@ namespace TetrisMasterClient_yhj
         {
             // receive
         }
+
+        bool startCheck = false;
+
+        private async void GamePanel_Paint(object sender, PaintEventArgs e)
+        {
+            if(startCheck != false)
+            {
+                info.NewBlock();
+                await info.MoveBlockDownLooplyAsync();
+                info.DrawBoard((Form)this);
+            }
+
+            
+            /*MessageBox.Show("Game Over.");*/
+        }
+
+       
+
+
     }
 
 }
