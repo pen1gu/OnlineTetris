@@ -10,6 +10,7 @@ namespace TetrisMasterClient_yhj
     public class TetrisInfo
     {
         public Boolean isEnded = false;
+        public Form1 form1;
         User user;
         SocketEx connection;
         BoardBase boardBase;
@@ -34,17 +35,17 @@ namespace TetrisMasterClient_yhj
 
         }
 
-        Form TaskForm;
 
-        public async Task Run(Form TaskForm, User user, SocketEx connection)
+        public async void Run(Form1 form1, User user, SocketEx connection)
         {
             this.user = user;
             this.connection = connection;
-            this.TaskForm = TaskForm;
+            this.form1 = form1;
 
-            boardBase = user.getBoardBase();
 
-            await MoveBlockDownLooplyAsync();
+            boardBase = new BoardBase();
+
+             await MoveBlockDownLooplyAsync();
         }
 
         public void Rotate() 
@@ -78,22 +79,19 @@ namespace TetrisMasterClient_yhj
         public void MoveDown()
         {
             RemoveCurrentBlock();
+                CurrentY++;
+            try
+            {
 
-            CurrentY++;
-            MergeCurrentBlockToBoard();
+                MergeCurrentBlockToBoard();
+
+            }
+            catch(Exception e)
+            {
+                MessageBox.Show(e.Message);
+            }
             sendBoard();
         }
-
-        /* public void DropLastBlock()
-         {
-             boardBase.Board[h_index, w_index] = 0;
-         }
- */
-        /*public async void MoveEnd()
-        {
-            await StepDownBlock();
-            sendBoard();
-        }*/
 
         private void RemoveCurrentBlock() // 이전에 위치했던 블록 위치 삭제
         {
@@ -112,7 +110,7 @@ namespace TetrisMasterClient_yhj
 
         public void DrawBoard(Form form) // 화면에 그리기 unitsize -> 한 칸 크기 (30,30)
         {
-            int unitSize = 30;
+            int unitSize = 20;
 
             int marginLeft = 1 * unitSize;
             int marginTop = -1 * unitSize;
@@ -132,9 +130,16 @@ namespace TetrisMasterClient_yhj
                     x1 = marginLeft + (i * unitSize);
                     y1 = marginTop + (j * unitSize);
 
-                    if (Board[i, j] != OldBoard[i, j])
+                    try
                     {
-                        PaintCell(form, unitSize, x1, y1, i, j);
+                        if (Board[i, j] != OldBoard[i, j])
+                        {
+                            PaintCell(form, unitSize, x1, y1, i, j);
+                        }
+                    }
+                    catch(Exception e)
+                    {
+                        MessageBox.Show(e.Message);
                     }
                     OldBoard[i, j] = Board[i, j];
                 }
@@ -153,10 +158,9 @@ namespace TetrisMasterClient_yhj
             {
                 return;
             }
-
             switch (Board[i, j])
             {
-                case 1:
+                case 1: 
                     g.FillRectangle(Brushes.White, x1, y1, unitSize, unitSize);
                     g.DrawRectangle(new Pen(Brushes.Black), x1, y1, unitSize, unitSize);
                     break;
@@ -172,62 +176,19 @@ namespace TetrisMasterClient_yhj
 
         private void MergeCurrentBlockToBoard()
         {
-            Board[CurrentX, CurrentY] = 2;
+            try { 
+                Board[CurrentX, CurrentY] = 2;
+            }
+            catch
+            {
+                return;
+                // TODO:
+            }
+            form1.setLog("X: " + CurrentX + ", Y: " + CurrentY+"\n");
+            // 여기서 Board를 나가는 에러가 발생
         }
 
-        /* private bool CanAction(int nextDirection, int nextX, int nextY) // 동작을 받았을 시 방향 설정 밑 다음 위치 설정
-         {
-             int[,] bloackArray = GetBlockArray(CurrentBlock, nextDirection);
-             int arrayLength = bloackArray.Length;
-             int size = 0;
-
-             switch (arrayLength)
-             {
-                 case 4:
-                     size = 2;
-                     break;
-                 case 9:
-                     size = 3;
-                     break;
-                 case 16:
-                     size = 4;
-                     break;
-
-             }
-
-
-
-             for (int i = 0; i < size; i++)
-             {
-                 for (int j = 0; j < size; j++)
-                 {
-                     if (bloackArray[i, j] == 1)
-                     {
-                         if (nextY + j >= Height)
-                         {
-                             return false;
-                         }
-
-                         if (nextX + i < 0)
-                         {
-                             return false;
-                         }
-
-                         if (nextX + i >= Width)
-                         {
-                             return false;
-                         }
-
-                         if (Board[nextX + i, nextY + j] != 0)
-                         {
-                             return false;
-                         }
-                     }
-                 }
-             }
-             return true;
-         }*/
-
+      
         public void NewBlock()
         {
             CurrentX = 4;
@@ -237,24 +198,8 @@ namespace TetrisMasterClient_yhj
             MergeCurrentBlockToBoard();
         }
 
-        /*public void StepDownBlock()
-        {
-            // 기본적으로 내려오는 것
 
-
-            for (int i = 0; i < boardBase.RowCnt; i++)
-            {
-                for (int j = 0; j < boardBase.ColumnCnt; j++)
-                {
-                    if (boardBase.Board[i + 1, j + 1] != 0)
-                    {
-                        boardBase.Board[i + 1, j + 1] += 1;
-                    }
-                }
-            }
-
-            sendBoard();
-        }*/
+        //TODO: 최대 보드 길이 설정
 
         private async void sendBoard()
         { 
@@ -264,23 +209,24 @@ namespace TetrisMasterClient_yhj
             });
         }
 
-        public async Task<bool> MoveBlockDownLooplyAsync()
+        public async Task<bool> MoveBlockDownLooplyAsync() // 동작 부분
         {
             while (true) // 계속해서 돌면서 delay 150을 넣음
             {
                 await semaphoreSlim.WaitAsync();
                 MoveDown();
-                semaphoreSlim.Release();
-                DrawBoard(TaskForm);
 
-                /*if (Tetris.IsGameOver())
-                {
-                    break;
-                }*/
+                    DrawBoard(form1);
+                    semaphoreSlim.Release();
 
-                /*Text = CurrentBlock.ToString();*/
-                sendBoard();
-                await Task.Delay(150);
+                    /*if (IsGameOver())
+                    {
+                        break;
+                    }*/
+
+                    /*Text = CurrentBlock.ToString();*/
+                    sendBoard();
+                    await Task.Delay(150);
             }
 
             return true;
