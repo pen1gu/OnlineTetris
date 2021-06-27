@@ -137,10 +137,11 @@ namespace TetrisMasterClient_yhj
             StartBoard();
         }
 
-        private async void StartBoard()
+        private  void StartBoard()
         {
 
-            await info.Run((Form)this, user, connection);
+            info.Run(this, user, connection);
+             
             startCheck = true;
             this.Refresh();
             UpdateBoard();
@@ -149,25 +150,51 @@ namespace TetrisMasterClient_yhj
         private void BtnStart_Click(object sender, EventArgs e)
         {
             GameStart();
+            Graphics g;
+            try
+            {
+                g = this.CreateGraphics();
+            }
+            catch
+            {
+                return;
+            }
+
+            for(int i = 0; i < 20; i++)
+            {
+                for(int j = 0; j<12; j++)
+                {
+                    g.DrawRectangle(new Pen(Brushes.White), 10 + j * 20, 10 + i * 20, 20, 20);
+                    g.FillRectangle(Brushes.Black, 10 + j * 20, 10 + i * 20, 20, 20);
+                }
+            }
+
+
+            //TODO: 뒷 배경 칠하기
         }
 
         private void Form1_KeyDown(object sender, KeyEventArgs e)
         {
+            MessageBox.Show(e.KeyCode+"");
             if (connection?.Connected ?? true)
             {
+                MessageBox.Show("연결이 되어있지 않습니다.");
                 return;
             }
 
             else if (e.KeyCode == Keys.Left)
             {
+                MessageBox.Show("왼");
                 info.MoveLeft();
             }
             else if (e.KeyCode == Keys.Right)
             {
+                MessageBox.Show("우");
                 info.MoveRight();
             }
             else if (e.KeyCode == Keys.Down || e.KeyCode == Keys.Space)
             {
+                MessageBox.Show("아래");
                 info.MoveDown();
             }
 
@@ -181,20 +208,34 @@ namespace TetrisMasterClient_yhj
 
         bool startCheck = false;
 
-        private async void GamePanel_Paint(object sender, PaintEventArgs e)
+        private void Form1_KeyPress(object sender, KeyPressEventArgs e)
         {
-            if(startCheck != false)
-            {
-                info.NewBlock();
-                await info.MoveBlockDownLooplyAsync();
-                info.DrawBoard((Form)this);
-            }
 
-            
-            /*MessageBox.Show("Game Over.");*/
         }
 
-       
+        private void richTextBox1_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        public void setLog(string log)
+        {
+            richTextBox1.AppendText(log);
+        }
+
+        /*   private async void GamePanel_Paint(object sender, PaintEventArgs e) 이거는 없어도 된다.
+           {
+               if(startCheck != false)
+               {
+                   info.NewBlock();
+                   await info.MoveBlockDownLooplyAsync();
+                   info.DrawBoard((Form)this);
+               }
+
+               *//*MessageBox.Show("Game Over.");*//*
+           }
+   */
+
 
 
     }
