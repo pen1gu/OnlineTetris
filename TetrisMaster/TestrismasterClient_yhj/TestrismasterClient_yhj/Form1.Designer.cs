@@ -30,7 +30,7 @@
         {
             this.BtnConnect = new System.Windows.Forms.Button();
             this.BtnStart = new System.Windows.Forms.Button();
-            this.GamePanel = new System.Windows.Forms.Panel();
+            this.richTextBox1 = new System.Windows.Forms.RichTextBox();
             this.SuspendLayout();
             // 
             // BtnConnect
@@ -53,25 +53,27 @@
             this.BtnStart.UseVisualStyleBackColor = true;
             this.BtnStart.Click += new System.EventHandler(this.BtnStart_Click);
             // 
-            // GamePanel
+            // richTextBox1
             // 
-            this.GamePanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.GamePanel.Location = new System.Drawing.Point(12, 12);
-            this.GamePanel.Name = "GamePanel";
-            this.GamePanel.Size = new System.Drawing.Size(330, 432);
-            this.GamePanel.TabIndex = 1;
+            this.richTextBox1.Location = new System.Drawing.Point(531, 12);
+            this.richTextBox1.Name = "richTextBox1";
+            this.richTextBox1.Size = new System.Drawing.Size(463, 485);
+            this.richTextBox1.TabIndex = 1;
+            this.richTextBox1.Text = "";
+            this.richTextBox1.TextChanged += new System.EventHandler(this.richTextBox1_TextChanged);
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(356, 495);
-            this.Controls.Add(this.GamePanel);
+            this.ClientSize = new System.Drawing.Size(1006, 509);
+            this.Controls.Add(this.richTextBox1);
             this.Controls.Add(this.BtnStart);
             this.Controls.Add(this.BtnConnect);
             this.Name = "Form1";
             this.Text = "Form1";
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Form1_KeyDown);
+            this.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.Form1_KeyPress);
             this.ResumeLayout(false);
 
         }
@@ -80,7 +82,7 @@
 
         private System.Windows.Forms.Button BtnConnect;
         private System.Windows.Forms.Button BtnStart;
-        private System.Windows.Forms.Panel GamePanel;
+        public System.Windows.Forms.RichTextBox richTextBox1;
     }
 }
 
