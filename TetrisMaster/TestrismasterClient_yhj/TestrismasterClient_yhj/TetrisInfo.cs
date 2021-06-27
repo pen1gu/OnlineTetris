@@ -44,6 +44,7 @@ namespace TetrisMasterClient_yhj
 
 
             boardBase = new BoardBase();
+            //BoardBase file 참고하여 Cell type 지정
 
              await MoveBlockDownLooplyAsync();
         }
