@@ -8,21 +8,18 @@ namespace TetrisMasterClient_yhj
 
     public class User
     {
-        BoardBase board { get; set; }
+        Board board { get; set; }
         string userName { get; set; }
-
-        //bool endGame = false;
 
         public User(string userName)
         {
-            this.userName = userName; // 유저 로그인
-            board = new BoardBase(); // 사용자 보드 생성
+            this.userName = userName; // 유저 
+            this.board = new Board(5,10);
         }
 
-        public BoardBase getBoardBase()
+        public Board getBoard()
         {
             return board;
         }
-
     }
 }
