@@ -5,11 +5,11 @@ using System.Linq;
 
 namespace Common
 {
-    public abstract class BoardBase
+    public abstract class BoardBase 
     {
         public Cell[,] Board { get; set; }
-        public int ColumnCount { get; private set; }
-        public int RowCount { get; private set; }
+        public int Width { get; set; }
+        public int Height { get; set; }
 
         public abstract void MoveRight();
         public abstract void MoveLeft();
@@ -20,7 +20,7 @@ namespace Common
     public class Cell
     {
         public CellType CellType { get; set; }
-        public CellColor Color { get; set; }
+         public CellColor Color { get; set; }
     }
 
     public enum CellType
