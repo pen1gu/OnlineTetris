@@ -20,8 +20,10 @@ namespace TetrisMasterClient_yhj
 
         SocketEx connection = null;
         User user;
-        public TetrisInfo info = new TetrisInfo();
-        
+        Board boardBase = new Board(5,10);
+        bool checkPaint = false;
+        /*public TetrisInfo info = new TetrisInfo();*/
+        SemaphoreSlim semaphoreSlim = new SemaphoreSlim(1, 1);
 
         public Form1()
         {
@@ -50,6 +52,7 @@ namespace TetrisMasterClient_yhj
 
                 await HandleReceiveAsync();
                 user = new User("yhj");
+                
             }
             catch (Exception ex)
             {
@@ -134,18 +137,16 @@ namespace TetrisMasterClient_yhj
 
             MessageBox.Show("보드 연결");
 
-            StartBoard();
+            checkPaint = true;
+            Invalidate();
         }
 
-        private  void StartBoard()
-        {
-
-            info.Run(this, user, connection);
-             
+        /*private  void StartBoard()
+        { 
             startCheck = true;
             this.Refresh();
             UpdateBoard();
-        }
+        }*/
 
         private void BtnStart_Click(object sender, EventArgs e)
         {
@@ -175,27 +176,34 @@ namespace TetrisMasterClient_yhj
 
         private void Form1_KeyDown(object sender, KeyEventArgs e)
         {
-            MessageBox.Show(e.KeyCode+"");
+            MessageBox.Show(e.KeyCode + "");
+
             if (connection?.Connected ?? true)
             {
                 MessageBox.Show("연결이 되어있지 않습니다.");
                 return;
             }
-
+            // send
             else if (e.KeyCode == Keys.Left)
             {
+                semaphoreSlim.WaitAsync();
                 MessageBox.Show("왼");
-                info.MoveLeft();
+                boardBase.MoveLeft();
+                semaphoreSlim.Release();
             }
             else if (e.KeyCode == Keys.Right)
             {
+                semaphoreSlim.WaitAsync();
                 MessageBox.Show("우");
-                info.MoveRight();
+                boardBase.MoveRight();
+                semaphoreSlim.Release();
             }
             else if (e.KeyCode == Keys.Down || e.KeyCode == Keys.Space)
             {
+                semaphoreSlim.WaitAsync();
                 MessageBox.Show("아래");
-                info.MoveDown();
+                boardBase.MoveDown();
+                semaphoreSlim.Release();
             }
 
             UpdateBoard();
@@ -210,12 +218,12 @@ namespace TetrisMasterClient_yhj
 
         private void Form1_KeyPress(object sender, KeyPressEventArgs e)
         {
-
+            // 움직임 테스트
         }
 
         private void richTextBox1_TextChanged(object sender, EventArgs e)
         {
-
+            // 아무것도 없음
         }
 
         public void setLog(string log)
@@ -223,21 +231,38 @@ namespace TetrisMasterClient_yhj
             richTextBox1.AppendText(log);
         }
 
-        /*   private async void GamePanel_Paint(object sender, PaintEventArgs e) 이거는 없어도 된다.
-           {
-               if(startCheck != false)
-               {
-                   info.NewBlock();
-                   await info.MoveBlockDownLooplyAsync();
-                   info.DrawBoard((Form)this);
-               }
+    
+        public async Task<bool> MoveBlockDownLooplyAsync() // 동작 부분
+        {
+            while (true) // 계속해서 돌면서 delay 150을 넣음
+            {
+                await semaphoreSlim.WaitAsync();
+                boardBase.MoveDown();
 
-               *//*MessageBox.Show("Game Over.");*//*
-           }
-   */
+                boardBase.DrawBoard(this);
+
+                /*if (IsGameOver())
+                {
+                    break;
+                }*/
+
+                await Task.Delay(150);
+            }
 
 
+            return true;
+        }
 
+        private async void Form1_Paint(object sender, PaintEventArgs e)
+        {
+            if (checkPaint != false)
+            {
+                boardBase.NewBlock();
+                await MoveBlockDownLooplyAsync();
+                boardBase.DrawBoard((Form1)this);
+                MessageBox.Show("Game Over.");
+            }
+        }
     }
 
 }
