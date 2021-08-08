@@ -10,7 +10,7 @@ namespace Common
         public Cell[,] Board { get; set; }
         public int Width { get; set; }
         public int Height { get; set; }
-
+         
         public abstract void MoveRight();
         public abstract void MoveLeft();
         public abstract void MoveDown();
