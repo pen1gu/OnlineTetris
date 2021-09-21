@@ -19,7 +19,6 @@ namespace OfflineTestrisGame
         public Form1()
         {
             InitializeComponent();
-            GameStart();
         }
 
 
@@ -27,7 +26,7 @@ namespace OfflineTestrisGame
         // Move Event
         // Cell Data
 
-        private void GameStart()
+        private async void GameStart()
         {
 
             Graphics g;
@@ -49,7 +48,7 @@ namespace OfflineTestrisGame
                 }
             }
 
-
+            await MoveBlockDownLooplyAsync();
             //TODO: 뒷 배경 칠하기
         }
 
@@ -76,7 +75,7 @@ namespace OfflineTestrisGame
                 semaphoreSlim.Release();
             }
 
-            UpdateBoard();
+            DrawBoard();
         }
 
         private async void UpdateBoard()
@@ -87,62 +86,70 @@ namespace OfflineTestrisGame
 
         public async Task<bool> MoveBlockDownLooplyAsync() // 동작 부분
         {
-            _data.;
-            await MoveBlockDownLooplyAsync();
-            _data.DrawBoard((Form1)this);
+            _data.MakeNewBlock();
+            await DrawBoard();
 
             while (true) // 계속해서 돌면서 delay 150을 넣음
             {
                 await semaphoreSlim.WaitAsync();
                 _data.MoveDown();
+                semaphoreSlim.Release();
+                await Task.Delay(1000);
 
-                DrawBoard();
-
-                if(rule.IsGameOver(20,12,_data.board))
+                if (rule.IsGameOver(20, 12, _data.board))
                 {
                     break;
                 }
 
-                await Task.Delay(150);
+               
+                await DrawBoard();
             }
 
             return false;
         }
 
-        private async void Form1_Paint(object sender, PaintEventArgs e)
+        private void Form1_Paint(object sender, PaintEventArgs e)
         {
-                MessageBox.Show("Game Over.");
+            MessageBox.Show("Game Over.");
         }
 
         private void Form1_Load(object sender, EventArgs e)
         {
             StartPosition = FormStartPosition.CenterScreen;
         }
-        private void DrawBoard()
-        {
 
+        private async Task<bool> DrawBoard()
+        {
+            for (int i = 0; i < 20; i++)
+            {
+                for(int j = 0; j< 12; j++)
+                { 
+                    PaintCell(20, 10 + j * 20, 10 + i * 20, i, j);
+                }
+            }
+            return true;
         }
 
-        private void PaintCell(Form form, int unitSize, float x1, float y1, int i, int j) // 그릴 폼, 한 블록의 크기, x, y 좌표, i,j 번째의 방향
+        private void PaintCell(int unitSize, float x1, float y1, int i, int j) // 그릴 폼, 한 블록의 크기, x, y 좌표, i,j 번째의 방향
         {
             Graphics g;
 
             try
             {
-                g = form.CreateGraphics();
+                g = this.CreateGraphics();
             }
             catch
             {
-                return;
+                return;      
             }
 
             switch (_data.board[i, j])
             {
-                case 1:
+                case CellType.Fill:
                     g.FillRectangle(Brushes.White, x1, y1, unitSize, unitSize);
                     g.DrawRectangle(new Pen(Brushes.Black), x1, y1, unitSize, unitSize);
                     break;
-                case 2:
+                case CellType.Active:
                     g.FillRectangle(Brushes.Red, x1, y1, unitSize, unitSize);
                     g.DrawRectangle(new Pen(Brushes.Black), x1, y1, unitSize, unitSize);
                     break;
@@ -150,13 +157,12 @@ namespace OfflineTestrisGame
                     g.FillRectangle(Brushes.Black, x1, y1, unitSize, unitSize);
                     break;
             }
+            this.Update();
         }
 
         private void BtnStart_Click(object sender, EventArgs e)
         {
-            _data.NewBlock();
-            await MoveBlockDownLooplyAsync();
-            DrawBoard((Form1)this);
+            GameStart();
         }
     }
 }
