@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace OfflineTestrisGame
@@ -10,7 +11,7 @@ namespace OfflineTestrisGame
         GameRule rule = new GameRule();
         // 여기서 데이터만 바꿔줌, 데이터만 이라는거 명심.
 
-        public CellType[,] board = new CellType[20, 12]
+        public CellType[,] board = new CellType[20, 12];
         int WIDTH = 12;
         int HEIGHT = 20;
         int NewBlockX;
@@ -46,6 +47,11 @@ namespace OfflineTestrisGame
             return (PieceType)random.Next(0, 7);
         }
 
+        public CellType[,] GetBoard()
+        {
+            return board;
+        }
+
         public void MakeNewBlock()
         {
             CurrentX = 4;
@@ -57,7 +63,7 @@ namespace OfflineTestrisGame
 
         public void MergeBlockToBoard()
         {
-            
+
             CellType[,] block = GetBlockObject(_pieceType, Direction.Up);
             int arrayLength = block.Length;
             int size = 0;
@@ -82,7 +88,7 @@ namespace OfflineTestrisGame
                 {
                     if (block[i, j] == CellType.Active)
                     {
-                        board[CurrentX + i, CurrentY + j] = 2;
+                        board[CurrentY + i, CurrentX + j] = CellType.Active;
                     }
                 }
             }
@@ -96,13 +102,29 @@ namespace OfflineTestrisGame
                 case PieceType.A:
                     switch (direction)
                     {
-                        case Direction.Up: // normal
-                        case Direction.Down:
-                            block = new CellType[4, 4] { { CellType.Empty, CellType.Empty , CellType.Empty , CellType.Empty },{ CellType.Active, CellType.Active, CellType.Active, CellType.Active } };
+                        case Direction.Up: 
+                            block = new CellType[4, 4] {
+                                { CellType.Empty, CellType.Empty , CellType.Empty , CellType.Empty },
+                                { CellType.Active, CellType.Active, CellType.Active, CellType.Active },
+                                { CellType.Empty, CellType.Empty , CellType.Empty , CellType.Empty },
+                                { CellType.Empty, CellType.Empty , CellType.Empty , CellType.Empty },
+                            };
                             break;
                         case Direction.Left:
+                            block = new CellType[4, 4] {
+                                { CellType.Empty, CellType.Empty , CellType.Active , CellType.Empty },
+                                { CellType.Empty, CellType.Empty, CellType.Active, CellType.Empty },
+                                { CellType.Empty, CellType.Empty , CellType.Active , CellType.Empty },
+                                { CellType.Empty, CellType.Empty , CellType.Active , CellType.Empty },
+                            };
+                            break;
                         case Direction.Right:
-                            block = new CellType[4, 4] { { CellType.Active }, { CellType.Active }, { CellType.Active }, { CellType.Active } };
+                            block = new CellType[4, 4] {
+                                { CellType.Empty, CellType.Active , CellType.Empty , CellType.Empty },
+                                { CellType.Empty, CellType.Active, CellType.Empty, CellType.Empty },
+                                { CellType.Empty, CellType.Active , CellType.Empty , CellType.Empty },
+                                { CellType.Empty, CellType.Active , CellType.Empty , CellType.Empty },
+                            };
                             break;
                     }
                     break;
@@ -110,24 +132,25 @@ namespace OfflineTestrisGame
                     switch (direction)
                     {
                         case Direction.Up: // normal
-                            block = new CellType[2, 3]{
+                            block = new CellType[3, 3]{
+                                { CellType.Empty, CellType.Empty, CellType.Empty},
                                 { CellType.Empty, CellType.Active, CellType.Empty},
                                 {CellType.Active, CellType.Active,CellType.Active }
                             };
                             break;
 
                         case Direction.Left:
-                            block = new CellType[3, 2]{
-                                { CellType.Empty, CellType.Active},
-                                {CellType.Active, CellType.Active},
-                                {CellType.Empty, CellType.Active}
+                            block = new CellType[3, 3]{
+                                { CellType.Empty, CellType.Empty, CellType.Active},
+                                { CellType.Empty, CellType.Active, CellType.Active},
+                                {CellType.Empty, CellType.Empty,CellType.Active }
                             };
                             break;
                         case Direction.Right:
-                            block = new CellType[3, 2]{
-                                { CellType.Active, CellType.Empty},
-                                {CellType.Active, CellType.Active},
-                                {CellType.Active, CellType.Empty}
+                            block = new CellType[3, 3]{
+                                { CellType.Active, CellType.Empty, CellType.Empty},
+                                { CellType.Active, CellType.Active, CellType.Empty},
+                                {CellType.Active, CellType.Empty,CellType.Empty }
                             };
                             break;
                     }
@@ -135,27 +158,14 @@ namespace OfflineTestrisGame
                 case PieceType.C:
                     switch (direction)
                     {
-                        case Direction.Up: // normal
-                            block = new CellType[2, 2]
-                    {
-                        { CellType.Active, CellType.Active},
-                        {CellType.Active, CellType.Active}
-                    };
-                            break;
-
+                        case Direction.Up:
                         case Direction.Left:
-                            block = new CellType[2, 2]
-              {
-                        { CellType.Active, CellType.Active},
-                        {CellType.Active, CellType.Active}
-              };
-                            break;
                         case Direction.Right:
                             block = new CellType[2, 2]
-              {
-                        { CellType.Active, CellType.Active},
-                        {CellType.Active, CellType.Active}
-              };
+                            {
+                                { CellType.Active, CellType.Active},
+                                {CellType.Active, CellType.Active}
+                            };
                             break;
                     }
                     break;
@@ -163,56 +173,57 @@ namespace OfflineTestrisGame
                     switch (direction)
                     {
                         case Direction.Up: // normal
-                            block = new CellType[2, 3]
-                {
-                        { CellType.Empty, CellType.Empty, CellType.Active},
-                        {CellType.Active, CellType.Active,CellType.Active }
-                };
+                            block = new CellType[3, 3]
+                            {
+                                    { CellType.Empty, CellType.Empty, CellType.Empty},
+                                    { CellType.Empty, CellType.Empty, CellType.Active},
+                                    {CellType.Active, CellType.Active,CellType.Active }
+                            };
                             break;
 
                         case Direction.Left:
-                            block = new CellType[3, 2]
-                {
-                        { CellType.Active, CellType.Active},
-                        {CellType.Empty, CellType.Active},
-                        {CellType.Empty,CellType.Active }
-                };
+                            block = new CellType[3, 3]
+                                {
+                                        { CellType.Empty, CellType.Active, CellType.Active},
+                                        { CellType.Empty, CellType.Empty, CellType.Active},
+                                        {CellType.Empty, CellType.Empty,CellType.Active }
+                                };
                             break;
                         case Direction.Right:
-                            block = new CellType[3, 2]
-               {
-                        { CellType.Active, CellType.Empty  },
-                        {CellType.Active, CellType.Empty},
-                        {CellType.Active,CellType.Active }
-               };
+                            block = new CellType[3, 3]
+                               {
+                                        { CellType.Active, CellType.Empty, CellType.Empty},
+                                        { CellType.Active, CellType.Empty, CellType.Empty},
+                                        {CellType.Active, CellType.Active,CellType.Empty }
+                               };
                             break;
                     }
-
                     break;
                 case PieceType.E:
                     switch (direction)
                     {
                         case Direction.Up: // normal
-                            block = new CellType[2, 3]
+                            block = new CellType[3, 3]
                             {
+                                { CellType.Empty, CellType.Empty, CellType.Empty},
                                 { CellType.Active, CellType.Empty, CellType.Empty},
                                 {CellType.Active, CellType.Active,CellType.Active }
                            };
                             break;
                         case Direction.Left:
-                            block = new CellType[3, 2]
-                   {
-                        { CellType.Active, CellType.Empty},
-                        {CellType.Active, CellType.Active},
-                        {CellType.Empty, CellType.Active }
-                   };
+                            block = new CellType[3, 3]
+                           {
+                                { CellType.Active, CellType.Active, CellType.Empty},
+                                        { CellType.Active, CellType.Empty, CellType.Empty},
+                                        {CellType.Active, CellType.Empty,CellType.Empty }
+                           };
                             break;
                         case Direction.Right:
-                            block = new CellType[3, 2]
+                            block = new CellType[3, 3]
                    {
-                        { CellType.Active, CellType.Empty},
-                        {CellType.Active, CellType.Active},
-                        {CellType.Empty, CellType.Active }
+                                { CellType.Empty, CellType.Empty, CellType.Active},
+                                { CellType.Empty, CellType.Empty, CellType.Active},
+                                {CellType.Empty, CellType.Active,CellType.Active }
                    };
                             break;
                     }
@@ -221,31 +232,27 @@ namespace OfflineTestrisGame
                     switch (direction)
                     {
                         case Direction.Up: // normal
-                            block = new CellType[2, 3]
+                            block = new CellType[3, 3]
                     {
-                        { CellType.Empty, CellType.Active, CellType.Active},
-                        {CellType.Active, CellType.Active,CellType.Empty }
-                    };
-                            break;
-                        case Direction.Down:
-                            block = new CellType[2, 3]
-                    {
+                        { CellType.Empty, CellType.Empty, CellType.Empty},
                         { CellType.Empty, CellType.Active, CellType.Active},
                         {CellType.Active, CellType.Active,CellType.Empty }
                     };
                             break;
                         case Direction.Left:
-                            block = new CellType[2, 3]
+                            block = new CellType[3, 3]
                     {
-                        { CellType.Empty, CellType.Active, CellType.Active},
-                        {CellType.Active, CellType.Active,CellType.Empty }
+                        { CellType.Active, CellType.Empty, CellType.Empty},
+                        { CellType.Active, CellType.Active, CellType.Empty},
+                        {CellType.Empty, CellType.Active,CellType.Empty }
                     };
                             break;
                         case Direction.Right:
-                            block = new CellType[2, 3]
+                            block = new CellType[3, 3]
                     {
+                        { CellType.Empty, CellType.Active, CellType.Empty},
                         { CellType.Empty, CellType.Active, CellType.Active},
-                        {CellType.Active, CellType.Active,CellType.Empty }
+                        {CellType.Empty, CellType.Empty,CellType.Active }
                     };
                             break;
                     }
@@ -255,25 +262,27 @@ namespace OfflineTestrisGame
                     switch (direction)
                     {
                         case Direction.Up: // normal
-                            block = new CellType[2, 3]
+                            block = new CellType[3, 3]
                     {
+                        { CellType.Empty, CellType.Empty, CellType.Empty},
                         { CellType.Active, CellType.Active, CellType.Empty},
                         {CellType.Empty, CellType.Active,CellType.Active }
                     };
                             break;
                         case Direction.Left:
-                            block = new CellType[3, 2]
+                            block = new CellType[3, 3]
                     {
-                        { CellType.Empty  , CellType.Active},
-                        {CellType.Active, CellType.Active},
-                        {CellType.Active, CellType.Empty }
+                        { CellType.Empty, CellType.Active, CellType.Empty},
+                        { CellType.Active, CellType.Active, CellType.Empty},
+                        {CellType.Active, CellType.Empty,CellType.Empty }
                     };
                             break;
                         case Direction.Right:
-                            block = new CellType[2, 3]
+                            block = new CellType[3, 3]
                     {
-                        { CellType.Active, CellType.Active, CellType.Empty},
-                        {CellType.Empty, CellType.Active,CellType.Active }
+                        { CellType.Empty, CellType.Empty, CellType.Active},
+                        { CellType.Empty, CellType.Active, CellType.Active},
+                        {CellType.Empty, CellType.Active,CellType.Empty }
                     };
                             break;
                     }
@@ -286,29 +295,88 @@ namespace OfflineTestrisGame
 
         public void MoveDown()
         {
-        
 
-
+            for (int i = HEIGHT - 1; i >= 0; i--)
+            {
+                for (int j = WIDTH - 1; j >= 0; j--)
+                {
+                    if (board[i, j] == CellType.Active)
+                    {
+                        board[i, j] = CellType.Empty;
+                        board[i + 1, j] = CellType.Active;
+                    }
+                }
+            }
         }
 
         public void MoveRight()
         {
-
+            for (int i = 0; i < HEIGHT; i++)
+            {
+                for (int j = 0; j < WIDTH; j++)
+                {
+                    if (board[i, j] == CellType.Active)
+                    {
+                        board[i, j] = CellType.Empty;
+                        board[i, j + 1] = CellType.Active;
+                    }
+                }
+            }
         }
 
         public void MoveLeft()
         {
-
+            for (int i = 0; i < HEIGHT; i++)
+            {
+                for (int j = 0; j < WIDTH; j++)
+                {
+                    if (board[i, j] == CellType.Active)
+                    {
+                        board[i, j] = CellType.Empty;
+                        board[i, j - 1] = CellType.Active;
+                    }
+                }
+            }
         }
 
         private void ChangeTorawd()
-        { }
-
-        private void DestroyBlock()
         {
+
 
         }
 
+        private void CheckLineFilled()
+        {
+            for (int i = HEIGHT - 1; i >=0; i--)
+            {
+                int fillCount = 0;
+                for (int j = WIDTH - 1; j >= 0; j--)
+                {
+                    if (board[i, j] == CellType.Fill)
+                    {
+                        fillCount++;
+                    }
+                }
+
+                if (fillCount == WIDTH)
+                {
+                    DestroyBlock();
+                }
+            }
+        }
+
+        private void DestroyBlock()
+        {
+            for (int i = 0; i < HEIGHT - 1; i++)
+            {
+                for (int j = 0; j < WIDTH - 1; j++)
+                { 
+                    board[i+1, j+1] = board[i,j];
+                }
+            }
+
+            MakeNewBlock();
+        }
 
     }
 }
