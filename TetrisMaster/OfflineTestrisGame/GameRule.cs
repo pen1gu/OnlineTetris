@@ -7,7 +7,8 @@ namespace OfflineTestrisGame
     class GameRule
     {
         // 게임 룰 ( 라인 체크 등 )
-        internal bool IsFilledLine(int width, int height, CellType[,] board)
+
+        /*internal bool IsFilledLine(int width, int height, CellType[,] board)
         {
             int cnt = 0;
 
@@ -16,7 +17,7 @@ namespace OfflineTestrisGame
                 cnt = 0;
                 for (int j = 0; j < width; j++)
                 {
-                    if (board[i, j] == CellType.Fill || board[i, j] == CellType.Empty)
+                    if (board[i, j] == CellType.Fill)
                         cnt++;
                 }
             }
@@ -27,7 +28,7 @@ namespace OfflineTestrisGame
             }
 
             return false;
-        }
+        }*/ // 안써서 잠궈둠
 
         internal bool IsGameOver(int width, int height, CellType[,] board)
         {
