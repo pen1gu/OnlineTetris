@@ -19,6 +19,28 @@ namespace OfflineTestrisGame
         public Form1()
         {
             InitializeComponent();
+
+            BtnStart.KeyDown += Form1_KeyDown;
+            //BtnStart.KeyPress += BtnStart_KeyPress;
+            BtnStart.PreviewKeyDown += BtnStart_PreviewKeyDown;
+        }
+
+        private void BtnStart_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
+        {
+            switch (e.KeyCode)
+            {
+                case Keys.Down:
+                case Keys.Up:
+                case Keys.Left:
+                case Keys.Right:
+                    e.IsInputKey = true;
+                    break;
+            }
+        }
+
+        private void BtnStart_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            this.Text = new string(new[] { e.KeyChar });
         }
 
 
@@ -54,7 +76,7 @@ namespace OfflineTestrisGame
 
         private void Form1_KeyDown(object sender, KeyEventArgs e)
         {
-            MessageBox.Show(e.KeyCode + "");
+            //MessageBox.Show(e.KeyCode + "");
 
             if (e.KeyCode == Keys.Left)
             {
@@ -155,6 +177,7 @@ namespace OfflineTestrisGame
                     break;
                 default:
                     g.FillRectangle(Brushes.Black, x1, y1, unitSize, unitSize);
+                    g.DrawRectangle(new Pen(Brushes.White), x1, y1, unitSize, unitSize);
                     break;
             }
             this.Update();
