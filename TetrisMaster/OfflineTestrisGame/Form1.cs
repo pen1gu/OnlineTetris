@@ -96,6 +96,12 @@ namespace OfflineTestrisGame
                 _data.MoveDown();
                 semaphoreSlim.Release();
             }
+            else if (e.KeyCode == Keys.Up)
+            {
+                semaphoreSlim.WaitAsync();
+                _data.ChangeToward();
+                semaphoreSlim.Release();
+            }
 
             DrawBoard();
         }
@@ -116,17 +122,24 @@ namespace OfflineTestrisGame
                 await semaphoreSlim.WaitAsync();
                 _data.MoveDown();
                 semaphoreSlim.Release();
+
                 await Task.Delay(1000);
 
-                if (rule.IsGameOver(20, 12, _data.board))
+                /*if (rule.IsGameOver(12, _data._board))
                 {
                     break;
+                }*/
+
+                if (_data.CheckEndedActiveStatus())
+                {
+                    _data.ChangeActiveToAnyStatus(CellType.Fill);
+                    _data.MakeNewBlock();
                 }
 
-               
                 await DrawBoard();
             }
 
+            MessageBox.Show("Game Over");
             return false;
         }
 
@@ -144,8 +157,8 @@ namespace OfflineTestrisGame
         {
             for (int i = 0; i < 20; i++)
             {
-                for(int j = 0; j< 12; j++)
-                { 
+                for (int j = 0; j < 12; j++)
+                {
                     PaintCell(20, 10 + j * 20, 10 + i * 20, i, j);
                 }
             }
@@ -162,20 +175,24 @@ namespace OfflineTestrisGame
             }
             catch
             {
-                return;      
+                return;
             }
 
-            switch (_data.board[i, j])
+            switch (_data._board[i, j])
             {
                 case CellType.Fill:
-                    g.FillRectangle(Brushes.White, x1, y1, unitSize, unitSize);
+                    g.FillRectangle(new SolidBrush(Color.FromArgb(233, 230, 213)), x1, y1, unitSize, unitSize);
                     g.DrawRectangle(new Pen(Brushes.Black), x1, y1, unitSize, unitSize);
                     break;
                 case CellType.Active:
-                    g.FillRectangle(Brushes.Red, x1, y1, unitSize, unitSize);
+                    g.FillRectangle(new SolidBrush(Color.FromArgb(255, 213, 3)), x1, y1, unitSize, unitSize);
                     g.DrawRectangle(new Pen(Brushes.Black), x1, y1, unitSize, unitSize);
                     break;
-               
+
+                default: 
+                    g.FillRectangle(new SolidBrush(Color.FromArgb(77, 76, 71)), x1, y1, unitSize, unitSize);
+                    g.DrawRectangle(new Pen(Brushes.White), x1, y1, unitSize, unitSize);
+                    break;
             }
             this.Update();
         }

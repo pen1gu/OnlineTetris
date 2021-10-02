@@ -8,27 +8,33 @@ namespace OfflineTestrisGame
 {
     class TetrisData
     {
-        GameRule rule = new GameRule();
         // 여기서 데이터만 바꿔줌, 데이터만 이라는거 명심.
 
-        public CellType[,] board = new CellType[20, 12];
+        public CellType[,] _board = new CellType[20, 12];
+        public CellType[,] subBoard = new CellType[20, 12]; // 도입 생각 중
+        public int _CurrentX = 0;
+        public int _CurrentY = 0;
+        public int _CurrentBlockSize = 0;
         int WIDTH = 12;
         int HEIGHT = 20;
-        int NewBlockX;
-        int NewBlockY;
-        int CurrentX = 0;
-        int CurrentY = 0;
+        
+
+
+        int _dirIndex = 1;
         PieceType _pieceType;
+
+        Direction[] _directions = { Direction.Up, Direction.Right, Direction.Down, Direction.Left };
+        Direction _currentDirection = Direction.Up;
         public TetrisData()
         {
-            CurrentY = NewBlockY = 0;
-            CurrentX = NewBlockX = WIDTH / 2;
+            _CurrentY = 0;
+            _CurrentX = WIDTH / 2;
 
             for (int i = 0; i < HEIGHT; i++)
             {
                 for (int j = 0; i < WIDTH; i++)
                 {
-                    board[i, j] = CellType.Empty;
+                    _board[i, j] = CellType.Empty;
                 }
             }
         }
@@ -49,46 +55,46 @@ namespace OfflineTestrisGame
 
         public CellType[,] GetBoard()
         {
-            return board;
+            return _board;
         }
 
         public void MakeNewBlock()
         {
-            CurrentX = 4;
-            CurrentY = 0;
+            _dirIndex = 1;
+            _currentDirection = Direction.Up;
+            _CurrentX = WIDTH / 2 - 2;
+            _CurrentY = 1;
             _pieceType = SetRandomBlock();
             MergeBlockToBoard();
             // 데이터에 블록 추가
         }
-
         public void MergeBlockToBoard()
         {
 
-            CellType[,] block = GetBlockObject(_pieceType, Direction.Up);
+            CellType[,] block = GetBlockObject(_pieceType, _currentDirection);
             int arrayLength = block.Length;
-            int size = 0;
 
             switch (arrayLength)
             {
                 case 4:
-                    size = 2;
+                    _CurrentBlockSize = 2;
                     break;
                 case 9:
-                    size = 3;
+                    _CurrentBlockSize = 3;
                     break;
                 case 16:
-                    size = 4;
+                    _CurrentBlockSize = 4;
                     break;
 
             }
 
-            for (int i = 0; i < size; i++)
+            for (int i = 0; i < _CurrentBlockSize; i++)
             {
-                for (int j = 0; j < size; j++)
+                for (int j = 0; j < _CurrentBlockSize; j++)
                 {
                     if (block[i, j] == CellType.Active)
                     {
-                        board[CurrentY + i, CurrentX + j] = CellType.Active;
+                        _board[_CurrentY + i, _CurrentX + j] = CellType.Active;
                     }
                 }
             }
@@ -102,7 +108,8 @@ namespace OfflineTestrisGame
                 case PieceType.A:
                     switch (direction)
                     {
-                        case Direction.Up: 
+                        case Direction.Up:
+                        case Direction.Down:
                             block = new CellType[4, 4] {
                                 { CellType.Empty, CellType.Empty , CellType.Empty , CellType.Empty },
                                 { CellType.Active, CellType.Active, CellType.Active, CellType.Active },
@@ -138,7 +145,13 @@ namespace OfflineTestrisGame
                                 {CellType.Active, CellType.Active,CellType.Active }
                             };
                             break;
-
+                        case Direction.Down:
+                            block = new CellType[3, 3]{
+                                { CellType.Empty, CellType.Empty, CellType.Empty},
+                                { CellType.Active, CellType.Active, CellType.Active},
+                                {CellType.Empty, CellType.Active,CellType.Empty }
+                            };
+                            break;
                         case Direction.Left:
                             block = new CellType[3, 3]{
                                 { CellType.Empty, CellType.Empty, CellType.Active},
@@ -161,6 +174,7 @@ namespace OfflineTestrisGame
                         case Direction.Up:
                         case Direction.Left:
                         case Direction.Right:
+                        case Direction.Down:
                             block = new CellType[2, 2]
                             {
                                 { CellType.Active, CellType.Active},
@@ -180,7 +194,14 @@ namespace OfflineTestrisGame
                                     {CellType.Active, CellType.Active,CellType.Active }
                             };
                             break;
-
+                        case Direction.Down:
+                            block = new CellType[3, 3]
+                            {
+                                    { CellType.Empty, CellType.Empty, CellType.Empty},
+                                    { CellType.Active, CellType.Active, CellType.Active},
+                                    {CellType.Active, CellType.Empty,CellType.Empty }
+                            };
+                            break;
                         case Direction.Left:
                             block = new CellType[3, 3]
                                 {
@@ -210,6 +231,14 @@ namespace OfflineTestrisGame
                                 {CellType.Active, CellType.Active,CellType.Active }
                            };
                             break;
+                        case Direction.Down:
+                            block = new CellType[3, 3]
+                            {
+                                { CellType.Empty, CellType.Empty, CellType.Empty},
+                                { CellType.Active, CellType.Active, CellType.Active},
+                                {CellType.Empty, CellType.Empty,CellType.Active }
+                           };
+                            break;
                         case Direction.Left:
                             block = new CellType[3, 3]
                            {
@@ -232,12 +261,13 @@ namespace OfflineTestrisGame
                     switch (direction)
                     {
                         case Direction.Up: // normal
+                        case Direction.Down:
                             block = new CellType[3, 3]
-                    {
+                  {
                         { CellType.Empty, CellType.Empty, CellType.Empty},
                         { CellType.Empty, CellType.Active, CellType.Active},
                         {CellType.Active, CellType.Active,CellType.Empty }
-                    };
+                  };
                             break;
                         case Direction.Left:
                             block = new CellType[3, 3]
@@ -261,6 +291,7 @@ namespace OfflineTestrisGame
                 case PieceType.G:
                     switch (direction)
                     {
+                        case Direction.Down:
                         case Direction.Up: // normal
                             block = new CellType[3, 3]
                     {
@@ -295,64 +326,122 @@ namespace OfflineTestrisGame
 
         public void MoveDown()
         {
-
-            for (int i = HEIGHT - 1; i >= 0; i--)
-            {
-                for (int j = WIDTH - 1; j >= 0; j--)
+            if (CanMoveDown()) {   
+                for (int i = HEIGHT - 2; i >= 0 ; i--)
                 {
-                    if (board[i, j] == CellType.Active)
+                    for (int j = WIDTH - 1; j >= 0; j--)
                     {
-                        board[i, j] = CellType.Empty;
-                        board[i + 1, j] = CellType.Active;
+                        if (_board[i, j] == CellType.Active)
+                        {
+                            _board[i, j] = CellType.Empty;
+                            _board[i + 1, j] = CellType.Active;
+                        }
+
+                        
                     }
                 }
+                _CurrentY++;
+            }
+
+            if (CheckEndedActiveStatus())
+            {
+                ChangeActiveToAnyStatus(CellType.Fill);
+                CheckLineFilled();
+                MakeNewBlock();
             }
         }
 
         public void MoveRight()
         {
-            for (int i = 0; i < HEIGHT; i++)
+            if (CanMoveRight())
             {
-                for (int j = 0; j < WIDTH; j++)
+                for (int i = 0; i < HEIGHT; i++)
                 {
-                    if (board[i, j] == CellType.Active)
+                    for (int j = WIDTH - 2; j >= 0; j--)
                     {
-                        board[i, j] = CellType.Empty;
-                        board[i, j + 1] = CellType.Active;
+                        if (_board[i, j] == CellType.Active)
+                        {
+                            _board[i, j] = CellType.Empty;
+                            _board[i, j + 1] = CellType.Active;
+                        }
                     }
                 }
+            _CurrentX++;
             }
         }
 
         public void MoveLeft()
         {
+            if (CanMoveLeft())
+            {
+                for (int i = 0; i < HEIGHT; i++)
+                {
+                    for (int j = 0; j < WIDTH; j++)
+                    {
+                        if (_board[i, j] == CellType.Active)
+                        {
+                            _board[i, j] = CellType.Empty;
+                            _board[i, j - 1] = CellType.Active;
+                        }
+                    }
+                }
+            _CurrentX--;
+            }
+        }
+
+
+        public void ChangeToward()
+        {
+            int overIdx = 0; // 방향을 돌릴 때 화면 밖으로 나가는 현상 배제
+
+            _dirIndex = _dirIndex > 3 ? 0 : _dirIndex;
+            _currentDirection = _directions[_dirIndex];
+            _dirIndex++;
+
+            if(_CurrentX + _CurrentBlockSize > WIDTH)
+            {
+                overIdx = (_CurrentBlockSize + _CurrentX) - WIDTH;
+                _CurrentX -= overIdx;
+            }
+
+            if (_CurrentX - _CurrentBlockSize < 0)
+            {
+                _CurrentX = 0;
+            }
+
+            
+
+            ChangeActiveToAnyStatus(CellType.Empty);
+            MergeBlockToBoard();
+        }
+
+        /*private void CheckChangeFillState()
+        {
             for (int i = 0; i < HEIGHT; i++)
             {
                 for (int j = 0; j < WIDTH; j++)
                 {
                     if (board[i, j] == CellType.Active)
                     {
+                        if (board[i, j - 1] == CellType.Fill)
+                        {
+
+                        }
                         board[i, j] = CellType.Empty;
                         board[i, j - 1] = CellType.Active;
                     }
                 }
             }
-        }
-
-        private void ChangeTorawd()
-        {
-
-
-        }
+        }*/
 
         private void CheckLineFilled()
         {
-            for (int i = HEIGHT - 1; i >=0; i--)
+            for (int row = HEIGHT - 1; row >= 0; row--)
             {
                 int fillCount = 0;
-                for (int j = WIDTH - 1; j >= 0; j--)
+                for (int col = WIDTH - 1; col >= 0; col--)
                 {
-                    if (board[i, j] == CellType.Fill)
+                    if (_board[row, col] == CellType.Fill)
                     {
                         fillCount++;
                     }
@@ -360,23 +449,118 @@ namespace OfflineTestrisGame
 
                 if (fillCount == WIDTH)
                 {
-                    DestroyBlock();
+                    DestroyBlock(row);
                 }
             }
         }
 
-        private void DestroyBlock()
+        private void DestroyBlock(int removedRow)
         {
-            for (int i = 0; i < HEIGHT - 1; i++)
+            for (int row = removedRow; row > 0; row--)
             {
-                for (int j = 0; j < WIDTH - 1; j++)
-                { 
-                    board[i+1, j+1] = board[i,j];
+                for (int col = 0; col < WIDTH; col++)
+                {
+                    _board[row, col] = _board[row - 1, col];
+                }
+            }
+            
+        }
+
+        public bool CheckEndedActiveStatus()
+        {
+            int endHeight = HEIGHT - 1;
+
+            for (int row = 0; row < HEIGHT; row++)
+            {
+                for (int col = 0; col < WIDTH; col++)
+                {
+                    if (_board[row, col] == CellType.Active && row + 1 == HEIGHT) // 마지막 라인에 갔을 때
+                    {
+                        return true;
+                    }else if (_board[row, col] == CellType.Active && _board[row + 1, col] == CellType.Fill) // Active 블록 아래에 Fill 되어있을 때
+                    {
+                        // 어떤 상황에 끝나는지 테트리스에 대한 이해도가 필요하다.
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        public void ChangeActiveToAnyStatus(CellType type)
+        {
+            for (int i = 0; i < HEIGHT; i++)
+            {
+                for (int j = 0; j < WIDTH; j++)
+                {
+                    if (_board[i, j] == CellType.Active)
+                    {
+
+                        _board[i, j] = type;
+                        
+                    }
+                }
+            }
+        }
+
+        private bool CanMoveLeft()
+        {
+            for (var row = 0; row < HEIGHT; row++)
+            {
+                if (_board[row, 0] == CellType.Active)
+                {
+                    return false;
                 }
             }
 
-            MakeNewBlock();
+            for (var row = 0; row < HEIGHT; row++)
+            {
+                for (var col = 1; col < WIDTH; col++)
+                {
+                    if (_board[row, col] == CellType.Active && _board[row, col - 1] == CellType.Fill)
+                    {
+                        return false;
+                    }
+                }
+            }
+
+            return true;
         }
 
+        private bool CanMoveRight()
+        {
+            for (var row = 0; row < HEIGHT; row++)
+            {
+                if (_board[row, WIDTH - 1] == CellType.Active)
+                {
+                    return false;
+                }
+            }
+
+            for (var row = 0; row < HEIGHT; row++)
+            {
+                for (var col = 0; col < WIDTH - 1; col++)
+                {
+                    if (_board[row, col] == CellType.Active && _board[row, col + 1] == CellType.Fill)
+                    {
+                        return false;
+                    }
+                }
+            }
+
+            return true;
+        }
+        private bool CanMoveDown()
+        {
+            for (var col = 0; col < WIDTH; col++)
+            {
+                if (_board[HEIGHT - 1, col] == CellType.Active)
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+        // 동작마다 움직임에 대한 예외 처리 할 것
     }
 }
