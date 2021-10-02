@@ -92,5 +92,10 @@ namespace WindowsFormsApp3
             }
             return true;
         }
+
+        private void Form1_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
+        {
+            
+        }
     }
 }
