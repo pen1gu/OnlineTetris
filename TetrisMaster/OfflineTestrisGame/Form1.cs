@@ -176,8 +176,7 @@ namespace OfflineTestrisGame
                     g.DrawRectangle(new Pen(Brushes.Black), x1, y1, unitSize, unitSize);
                     break;
                 default:
-                    g.FillRectangle(Brushes.Black, x1, y1, unitSize, unitSize);
-                    g.DrawRectangle(new Pen(Brushes.White), x1, y1, unitSize, unitSize);
+                    
                     break;
             }
             this.Update();
