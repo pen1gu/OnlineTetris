@@ -4,7 +4,7 @@ using System.Text;
 
 namespace OfflineTestrisGame
 {
-    class GameRule
+    public class GameRule
     {
         // 게임 룰 ( 라인 체크 등 )
 
@@ -30,21 +30,17 @@ namespace OfflineTestrisGame
             return false;
         }*/ // 안써서 잠궈둠
 
-        internal bool IsGameOver(int width, int height, CellType[,] board)
+        internal bool IsGameOver(int width, CellType[,] board)
         {
-            bool isBlockFIlled = true;
-            for (int i = 0; i < width; i++)
+            for (int col = 0; col < width; col++)
             {
-                for (int j = 0; j < height; j++)
+                if(board[1, col] == CellType.Fill)
                 {
-                    if (board[i, j] != CellType.Fill)
-                    {
-                        isBlockFIlled = false;
-                    }
+                    return false;
                 }
             }
 
-            return isBlockFIlled;
+            return true;
         }
     }
 }
