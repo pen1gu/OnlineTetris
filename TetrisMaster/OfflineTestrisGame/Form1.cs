@@ -20,9 +20,7 @@ namespace OfflineTestrisGame
         {
             InitializeComponent();
 
-            BtnStart.KeyDown += Form1_KeyDown;
-            //BtnStart.KeyPress += BtnStart_KeyPress;
-            BtnStart.PreviewKeyDown += BtnStart_PreviewKeyDown;
+            GameStart();
         }
 
         private void BtnStart_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
@@ -78,32 +76,7 @@ namespace OfflineTestrisGame
         {
             //MessageBox.Show(e.KeyCode + "");
 
-            if (e.KeyCode == Keys.Left)
-            {
-                semaphoreSlim.WaitAsync();
-                _data.MoveLeft();
-                semaphoreSlim.Release();
-            }
-            else if (e.KeyCode == Keys.Right)
-            {
-                semaphoreSlim.WaitAsync();
-                _data.MoveRight();
-                semaphoreSlim.Release();
-            }
-            else if (e.KeyCode == Keys.Down || e.KeyCode == Keys.Space)
-            {
-                semaphoreSlim.WaitAsync();
-                _data.MoveDown();
-                semaphoreSlim.Release();
-            }
-            else if (e.KeyCode == Keys.Up)
-            {
-                semaphoreSlim.WaitAsync();
-                _data.ChangeToward();
-                semaphoreSlim.Release();
-            }
-
-            DrawBoard();
+           
         }
 
         private async void UpdateBoard()
@@ -124,6 +97,8 @@ namespace OfflineTestrisGame
                 semaphoreSlim.Release();
 
                 await Task.Delay(1000);
+
+                // 체크를 1초마다 한다
 
                 /*if (rule.IsGameOver(12, _data._board))
                 {
@@ -181,25 +156,51 @@ namespace OfflineTestrisGame
             switch (_data._board[i, j])
             {
                 case CellType.Fill:
-                    g.FillRectangle(new SolidBrush(Color.FromArgb(233, 230, 213)), x1, y1, unitSize, unitSize);
+                    g.FillRectangle(new SolidBrush(Color.FromArgb(201, 236, 253)), x1, y1, unitSize, unitSize);
                     g.DrawRectangle(new Pen(Brushes.Black), x1, y1, unitSize, unitSize);
                     break;
                 case CellType.Active:
-                    g.FillRectangle(new SolidBrush(Color.FromArgb(255, 213, 3)), x1, y1, unitSize, unitSize);
+                    g.FillRectangle(new SolidBrush(Color.FromArgb(236, 210, 255)), x1, y1, unitSize, unitSize);
                     g.DrawRectangle(new Pen(Brushes.Black), x1, y1, unitSize, unitSize);
                     break;
 
                 default: 
-                    g.FillRectangle(new SolidBrush(Color.FromArgb(77, 76, 71)), x1, y1, unitSize, unitSize);
+                    g.FillRectangle(new SolidBrush(Color.FromArgb(255, 228, 216)), x1, y1, unitSize, unitSize);
                     g.DrawRectangle(new Pen(Brushes.White), x1, y1, unitSize, unitSize);
                     break;
             }
             this.Update();
         }
 
-        private void BtnStart_Click(object sender, EventArgs e)
+
+        private void Form1_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
         {
-            GameStart();
+            if (e.KeyCode == Keys.Left)
+            {
+                semaphoreSlim.WaitAsync();
+                _data.MoveLeft();
+                semaphoreSlim.Release();
+            }
+            else if (e.KeyCode == Keys.Right)
+            {
+                semaphoreSlim.WaitAsync();
+                _data.MoveRight();
+                semaphoreSlim.Release();
+            }
+            else if (e.KeyCode == Keys.Down || e.KeyCode == Keys.Space)
+            {
+                semaphoreSlim.WaitAsync();
+                _data.MoveDown();
+                semaphoreSlim.Release();
+            }
+            else if (e.KeyCode == Keys.Up)
+            {
+                semaphoreSlim.WaitAsync();
+                _data.ChangeToward();
+                semaphoreSlim.Release();
+            }
+
+            DrawBoard();
         }
     }
 }
