@@ -28,48 +28,23 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.BtnStart = new System.Windows.Forms.Button();
-            this.LogTextBox = new System.Windows.Forms.RichTextBox();
             this.SuspendLayout();
-            // 
-            // BtnStart
-            // 
-            this.BtnStart.Location = new System.Drawing.Point(12, 517);
-            this.BtnStart.Name = "BtnStart";
-            this.BtnStart.Size = new System.Drawing.Size(75, 23);
-            this.BtnStart.TabIndex = 0;
-            this.BtnStart.Text = "시작";
-            this.BtnStart.UseVisualStyleBackColor = true;
-            this.BtnStart.Click += new System.EventHandler(this.BtnStart_Click);
-            this.BtnStart.PreviewKeyDown += new System.Windows.Forms.PreviewKeyDownEventHandler(this.BtnStart_PreviewKeyDown);
-            // 
-            // LogTextBox
-            // 
-            this.LogTextBox.Location = new System.Drawing.Point(397, 12);
-            this.LogTextBox.Name = "LogTextBox";
-            this.LogTextBox.Size = new System.Drawing.Size(314, 515);
-            this.LogTextBox.TabIndex = 1;
-            this.LogTextBox.Text = "";
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(723, 552);
-            this.Controls.Add(this.LogTextBox);
-            this.Controls.Add(this.BtnStart);
+            this.ClientSize = new System.Drawing.Size(392, 552);
             this.Name = "Form1";
             this.Text = "Form1";
             this.Load += new System.EventHandler(this.Form1_Load);
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Form1_KeyDown);
+            this.PreviewKeyDown += new System.Windows.Forms.PreviewKeyDownEventHandler(this.Form1_PreviewKeyDown);
             this.ResumeLayout(false);
 
         }
 
         #endregion
-
-        private System.Windows.Forms.Button BtnStart;
-        private System.Windows.Forms.RichTextBox LogTextBox;
     }
 }
 
