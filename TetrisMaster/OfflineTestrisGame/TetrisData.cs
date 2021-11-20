@@ -341,13 +341,15 @@ namespace OfflineTestrisGame
                     }
                 }
                 _CurrentY++;
-            }
 
-            if (CheckEndedActiveStatus())
-            {
-                ChangeActiveToAnyStatus(CellType.Fill);
-                CheckLineFilled();
-                MakeNewBlock();
+
+                if (CheckEndedActiveStatus())
+                {
+                    ChangeActiveToAnyStatus(CellType.Fill);
+                    CheckLineFilled();
+                    MakeNewBlock();
+                }
+
             }
         }
 
@@ -394,25 +396,28 @@ namespace OfflineTestrisGame
         {
             int overIdx = 0; // 방향을 돌릴 때 화면 밖으로 나가는 현상 배제
 
-            _dirIndex = _dirIndex > 3 ? 0 : _dirIndex;
-            _currentDirection = _directions[_dirIndex];
-            _dirIndex++;
-
-            if(_CurrentX + _CurrentBlockSize > WIDTH)
+            if (CanRotateAction())
             {
-                overIdx = (_CurrentBlockSize + _CurrentX) - WIDTH;
-                _CurrentX -= overIdx;
+                _dirIndex = _dirIndex > 3 ? 0 : _dirIndex;
+                _currentDirection = _directions[_dirIndex];
+                _dirIndex++;
+
+                if (_CurrentX + _CurrentBlockSize > WIDTH)
+                {
+                    overIdx = (_CurrentBlockSize + _CurrentX) - WIDTH;
+                    _CurrentX -= overIdx;
+                }
+
+                if (_CurrentX - _CurrentBlockSize < 0)
+                {
+                    _CurrentX = 0;
+                }
+
+
+
+                ChangeActiveToAnyStatus(CellType.Empty);
+                MergeBlockToBoard();
             }
-
-            if (_CurrentX - _CurrentBlockSize < 0)
-            {
-                _CurrentX = 0;
-            }
-
-            
-
-            ChangeActiveToAnyStatus(CellType.Empty);
-            MergeBlockToBoard();
         }
 
         /*private void CheckChangeFillState()
@@ -434,7 +439,7 @@ namespace OfflineTestrisGame
             }
         }*/
 
-        private void CheckLineFilled()
+        public void CheckLineFilled()
         {
             for (int row = HEIGHT - 1; row >= 0; row--)
             {
@@ -479,7 +484,6 @@ namespace OfflineTestrisGame
                         return true;
                     }else if (_board[row, col] == CellType.Active && _board[row + 1, col] == CellType.Fill) // Active 블록 아래에 Fill 되어있을 때
                     {
-                        // 어떤 상황에 끝나는지 테트리스에 대한 이해도가 필요하다.
                         return true;
                     }
                 }
@@ -562,5 +566,16 @@ namespace OfflineTestrisGame
             return true;
         }
         // 동작마다 움직임에 대한 예외 처리 할 것
+
+
+        public bool CanRotateAction()
+        {
+            if (_board[_CurrentY, _CurrentX] == CellType.Fill)
+            {
+                return false;
+            }
+
+            return true;
+        }
     }
 }
